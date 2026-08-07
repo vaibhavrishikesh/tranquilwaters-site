@@ -1,0 +1,13 @@
+# app-ads.txt — IAB Tech Lab spec
+# Authorised sellers of ad inventory for the Tranquil Waters apps.
+#
+# Why this file exists: Google Play lists tranquilwaters.in as the developer
+# website for these apps, so AdMob crawls tranquilwaters.in/app-ads.txt to verify
+# the app belongs to this account. Without it AdMob applies "limited ad serving".
+# Hydrate (Android) sat throttled on exactly this until 7 Aug 2026.
+#
+# Mirrors https://vaibhavrishikesh.github.io/app-ads.txt, which covers the apps
+# whose store listings point at that domain instead.
+
+google.com, pub-4765907187067298, DIRECT, f08c47fec0942fa0
+google.com, pub-8683652483152886, DIRECT, f08c47fec0942fa0
