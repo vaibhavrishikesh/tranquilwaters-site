@@ -88,6 +88,13 @@
     .upload-box strong { display:block; font-size:15px; }
     .upload-box span { display:block; margin-top:3px; color:var(--muted); font-size:13px; }
     .upload-box input { max-width:170px; font-size:12px; }
+    .media-preview { display:grid; gap:10px; padding:14px; border:1px solid var(--line); border-radius:18px; background:#fcf8fc; }
+    .media-preview[hidden] { display:none; }
+    .media-preview audio, .media-preview video { display:block; width:100%; border-radius:12px; background:#17151d; }
+    .media-meta { display:flex; flex-wrap:wrap; gap:8px 14px; color:#655e6e; font-size:12px; }
+    .media-meta strong { color:var(--ink); }
+    .preview-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .clear-file { border:0; padding:0; color:var(--pink); background:transparent; font:700 12px "DM Sans",sans-serif; cursor:pointer; }
     .demo-note { color:#8a8290; font-size:12px; }
     .ad-slot { display:flex; flex-direction:column; justify-content:center; min-height:100%; padding:28px; border-radius:26px; background:linear-gradient(145deg,#fff0f5,#f1edff); }
     .ad-slot .section-kicker { color:var(--violet); }
@@ -122,7 +129,7 @@
 <body>
   <header class="shell nav">
     <a class="brand" href="#top" aria-label="ReelVoice home"><span class="brand-mark"><img src="assets/reelvoice-icon.png" alt="" /></span>ReelVoice</a>
-    <nav class="nav-links" aria-label="Main navigation"><a href="#features">Features</a><a href="#plans">Plans</a><a href="#faq">FAQ</a><a class="nav-cta" href="#download">Get ReelVoice</a></nav>
+    <nav class="nav-links" aria-label="Main navigation"><a href="#features">Features</a><a href="#plans">Plans</a><a href="#faq">FAQ</a><a class="nav-cta" href="#download" data-conversion="app-download">Get ReelVoice</a></nav>
   </header>
 
   <main id="top">
@@ -131,7 +138,7 @@
         <p class="eyebrow">Audio + video studio</p>
         <h1>Make every word <span class="gradient-text">sound like you.</span></h1>
         <p class="hero-copy">Clean the noise, add a little atmosphere, and turn everyday recordings into something worth sharing.</p>
-        <div class="hero-actions"><a class="button primary" href="#download">Try ReelVoice</a><a class="button ghost" href="#features">See how it works</a></div>
+        <div class="hero-actions"><a class="button primary" href="#download" data-conversion="app-download">Try ReelVoice</a><a class="button ghost" href="#features">See how it works</a></div>
         <p class="trust">On-device recording. Simple controls. Your voice stays in your hands.</p>
       </div>
       <div class="phone-stage" aria-label="ReelVoice app preview"><div class="orb"></div><div class="phone"><div class="phone-top"></div><div class="app-head"><span>ReelVoice</span><span class="quota">20 / 20 min</span></div><h3>Studio-grade voice</h3><div class="phone-sub">Video + Audio</div><div class="mini-grid"><div class="mini-card"><div class="mini-icon">✓</div><strong>Quick Clean</strong><span>Remove noise</span></div><div class="mini-card"><div class="mini-icon">+</div><strong>Add Vibe</strong><span>Rain, cafe, ocean</span></div><div class="mini-card"><div class="mini-icon">▶</div><strong>Video Clean</strong><span>Clean in video</span></div></div><div class="reel-button">★ Make Reel — one tap →</div><div class="mode-row"><div class="mode">ॐ Bhakti</div><div class="mode">🏏 Cricket</div><div class="mode">🤫 Confess</div></div><div class="phone-bottom"></div></div></div>
@@ -139,9 +146,9 @@
 
     <section class="section" id="features"><div class="shell"><div class="section-head"><div><p class="section-kicker">The simple studio</p><h2>Less fixing. More making.</h2></div><p class="section-lede">ReelVoice gives your recordings a clean starting point and a distinct feeling, without making you learn a mixing desk.</p></div><div class="feature-grid"><article class="feature"><div class="feature-icon">✓</div><h3>Quick Clean</h3><p>Reduce everyday noise and bring the spoken word forward with a single tap.</p></article><article class="feature"><div class="feature-icon">+</div><h3>Add Vibe</h3><p>Give a voice note, story or reel a little room to breathe with subtle background texture.</p></article><article class="feature"><div class="feature-icon">▶</div><h3>Video Clean</h3><p>Keep the picture you love and make the voice underneath it easier to hear.</p></article></div></div></section>
 
-    <section class="section"><div class="shell split"><div><p class="section-kicker">Your sound, your mood</p><h2>Choose a feeling. Keep your voice.</h2><p class="section-lede" style="margin-top:20px">From calm and devotional to bold and energetic, background modes are made to support the moment instead of covering it up.</p><a class="button ghost" href="#download" style="margin-top:28px">Explore in the app</a></div><div class="mode-panel"><div class="mode-line"><span class="mode-swatch"></span><div><strong>Bhakti</strong><span>Temple bells · calm voice</span></div></div><div class="mode-line"><span class="mode-swatch"></span><div><strong>Cricket</strong><span>Stadium roar · bold voice</span></div></div><div class="mode-line"><span class="mode-swatch"></span><div><strong>Confession</strong><span>Whispered · close and honest</span></div></div></div></div></section>
+    <section class="section"><div class="shell split"><div><p class="section-kicker">Your sound, your mood</p><h2>Choose a feeling. Keep your voice.</h2><p class="section-lede" style="margin-top:20px">From calm and devotional to bold and energetic, background modes are made to support the moment instead of covering it up.</p><a class="button ghost" href="#download" data-conversion="app-download" style="margin-top:28px">Explore in the app</a></div><div class="mode-panel"><div class="mode-line"><span class="mode-swatch"></span><div><strong>Bhakti</strong><span>Temple bells · calm voice</span></div></div><div class="mode-line"><span class="mode-swatch"></span><div><strong>Cricket</strong><span>Stadium roar · bold voice</span></div></div><div class="mode-line"><span class="mode-swatch"></span><div><strong>Confession</strong><span>Whispered · close and honest</span></div></div></div></div></section>
 
-    <section class="section" id="studio"><div class="shell"><div class="section-head"><div><p class="section-kicker">Audio + video, together</p><h2>Bring a clip. Leave with a cleaner story.</h2></div><p class="section-lede">The web experience will connect to the same audio and video flows as the app. This preview keeps the entry points ready while processing is wired to the production API.</p></div><div class="studio-demo"><div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose media type"><button class="demo-tab" type="button" role="tab" aria-selected="true" data-media-tab="audio">Audio</button><button class="demo-tab" type="button" role="tab" aria-selected="false" data-media-tab="video">Video</button></div><div class="demo-panel" data-media-panel="audio"><div class="upload-box"><div><strong>Clean a voice recording</strong><span>MP3, WAV, M4A · processing will connect to the app API</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" /></div></div><div class="demo-panel" data-media-panel="video" hidden><div class="upload-box"><div><strong>Clean a video clip</strong><span>MP4, MOV, WEBM · clean exports will follow the app entitlement rules</span></div><input type="file" accept="video/*" aria-label="Choose a video file" /></div></div><span class="demo-note" data-demo-status>Demo upload only for now — no file is sent.</span></div><aside class="ad-slot"><p class="section-kicker">Built for discovery</p><h3>Room for helpful ads, when the audience is ready.</h3><p>Primary download and trial buttons are tagged as conversion points, so Google Ads can be connected later without changing the page structure.</p></aside></div></div></section>
+    <section class="section" id="studio"><div class="shell"><div class="section-head"><div><p class="section-kicker">Audio + video, together</p><h2>Bring a clip. Leave with a cleaner story.</h2></div><p class="section-lede">The web studio is in preview. Pick a local file to check the experience; processing will connect to the same audio and video flows as the app.</p></div><div class="studio-demo"><div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose media type"><button class="demo-tab" type="button" role="tab" aria-selected="true" data-media-tab="audio">Audio</button><button class="demo-tab" type="button" role="tab" aria-selected="false" data-media-tab="video">Video</button></div><div class="demo-panel" data-media-panel="audio"><div class="upload-box"><div><strong>Preview a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for now</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" data-media-panel="video" hidden><div class="upload-box"><div><strong>Preview a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for now</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — no file is uploaded.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div></div><span class="demo-note" data-demo-status>Choose a local file to preview it here. Nothing is uploaded.</span></div><aside class="ad-slot"><p class="section-kicker">Built for discovery</p><h3>Room for helpful ads, when the audience is ready.</h3><p>Primary download and trial buttons are tagged as conversion points, so Google Ads can be connected later without changing the page structure.</p></aside></div></div></section>
 
     <section class="shell product-band"><p class="eyebrow" style="color:#ffc4d0">Made for real moments</p><h2>One tap from a clean voice to a shareable reel.</h2><p>Record a thought, clean a clip, add a little atmosphere, then get back to the moment. ReelVoice keeps the flow light.</p><a class="button" href="#download" data-conversion="app-download" style="margin-top:18px;background:#fff;color:#2a1d32">Get the app</a></section>
 
@@ -149,21 +156,77 @@
 
     <section class="section" id="faq"><div class="shell"><div class="section-head"><div><p class="section-kicker">Good to know</p><h2>Questions, answered.</h2></div></div><div class="faq"><details open><summary>Does ReelVoice upload my recordings?</summary><p>Core recording and cleaning is designed around on-device processing. Sharing a file is always your choice.</p></details><details><summary>Can I clean video too?</summary><p>Yes. Video Clean is a separate flow for keeping your video while making its voice easier to hear.</p></details><details><summary>What happens when I use my free minutes?</summary><p>Free audio and video usage resets by calendar month. The app shows your current allowance.</p></details><details><summary>Where do I manage Pro?</summary><p>Subscriptions are purchased and managed through Google Play or the App Store.</p></details></div></div></section>
 
-    <section class="section" id="download" style="padding-top:20px"><div class="shell" style="text-align:center"><p class="section-kicker">Ready when you are</p><h2 style="margin:13px auto 18px">Give your next recording a better room.</h2><p class="section-lede" style="margin:0 auto 28px">ReelVoice is coming together for Android and iOS. Start with the free studio.</p><div class="hero-actions" style="justify-content:center"><a class="button primary" href="mailto:vaibhavgupta.rishikesh@gmail.com?subject=ReelVoice%20early%20access">Ask for access</a><a class="button ghost" href="mailto:vaibhavgupta.rishikesh@gmail.com?subject=ReelVoice%20feedback">Talk to us</a></div></div></section>
+    <section class="section" id="download" style="padding-top:20px"><div class="shell" style="text-align:center"><p class="section-kicker">Ready when you are</p><h2 style="margin:13px auto 18px">Give your next recording a better room.</h2><p class="section-lede" style="margin:0 auto 28px">ReelVoice is coming together for Android and iOS. Start with the free studio.</p><div class="hero-actions" style="justify-content:center"><a class="button primary" href="mailto:vaibhavgupta.rishikesh@gmail.com?subject=ReelVoice%20early%20access" data-conversion="early-access">Ask for access</a><a class="button ghost" href="mailto:vaibhavgupta.rishikesh@gmail.com?subject=ReelVoice%20feedback" data-conversion="feedback">Talk to us</a></div></div></section>
   </main>
   <footer><div class="shell footer-inner"><span>© 2026 ReelVoice · TranquilWaters</span><div class="footer-links"><a href="privacy-policy.html">Privacy</a><a href="terms.html">Terms</a><a href="mailto:vaibhavgupta.rishikesh@gmail.com">Contact</a></div></div></footer>
   <script>
     const tabs = [...document.querySelectorAll('[data-media-tab]')];
     const panels = [...document.querySelectorAll('[data-media-panel]')];
     const status = document.querySelector('[data-demo-status]');
+    const preview = document.querySelector('[data-media-preview]');
+    const audioPreview = document.querySelector('[data-audio-preview]');
+    const videoPreview = document.querySelector('[data-video-preview]');
+    const fileName = document.querySelector('[data-file-name]');
+    const fileSize = document.querySelector('[data-file-size]');
+    const fileDuration = document.querySelector('[data-file-duration]');
+    let objectUrl = null;
+    let activeInput = null;
+
+    const formatBytes = (bytes) => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
+    const formatDuration = (seconds) => {
+      if (!Number.isFinite(seconds)) return 'Duration unavailable';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.round(seconds % 60).toString().padStart(2, '0');
+      return `${mins}:${secs}`;
+    };
+    const clearPreview = () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      objectUrl = null;
+      activeInput = null;
+      preview.hidden = true;
+      audioPreview.hidden = true;
+      videoPreview.hidden = true;
+      audioPreview.removeAttribute('src');
+      videoPreview.removeAttribute('src');
+      fileName.textContent = '—';
+      fileSize.textContent = '—';
+      fileDuration.textContent = 'Duration will appear when ready';
+      document.querySelectorAll('[data-media-input]').forEach((input) => { input.value = ''; });
+      status.textContent = 'Choose a local file to preview it here. Nothing is uploaded.';
+    };
+
     tabs.forEach((tab) => tab.addEventListener('click', () => {
       const media = tab.dataset.mediaTab;
       tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
       panels.forEach((panel) => { panel.hidden = panel.dataset.mediaPanel !== media; });
-      status.textContent = media === 'audio' ? 'Demo upload only for now — no file is sent.' : 'Video demo upload only for now — no file is sent.';
+      status.textContent = activeInput?.dataset.mediaInput === media ? `${fileName.textContent} selected — preview only.` : `Choose a ${media} file to preview it here. Nothing is uploaded.`;
     }));
-    document.querySelectorAll('.upload-box input').forEach((input) => input.addEventListener('change', () => {
-      if (input.files[0]) status.textContent = `${input.files[0].name} selected — demo only, nothing uploaded.`;
+    document.querySelectorAll('[data-media-input]').forEach((input) => input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (!file) return;
+      clearPreview();
+      activeInput = input;
+      objectUrl = URL.createObjectURL(file);
+      const media = input.dataset.mediaInput;
+      const player = media === 'audio' ? audioPreview : videoPreview;
+      player.src = objectUrl;
+      player.hidden = false;
+      player.addEventListener('loadedmetadata', () => { fileDuration.textContent = formatDuration(player.duration); }, { once: true });
+      preview.hidden = false;
+      fileName.textContent = file.name;
+      fileSize.textContent = formatBytes(file.size);
+      status.textContent = `${file.name} selected — preview only, nothing uploaded.`;
+    }));
+    document.querySelector('[data-clear-file]').addEventListener('click', clearPreview);
+    document.querySelectorAll('[data-conversion]').forEach((link) => link.addEventListener('click', () => {
+      const conversion = link.dataset.conversion;
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'reelvoice_conversion', conversion });
+      if (typeof window.gtag === 'function') window.gtag('event', conversion, { event_category: 'reelvoice' });
     }));
   </script>
 </body>
