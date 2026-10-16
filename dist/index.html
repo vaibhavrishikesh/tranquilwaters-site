@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TranquilWaters — Simple mobile apps built in India</title>
+<meta name="description" content="TranquilWaters builds simple, focused mobile apps — health habits, music practice, festival posters and more. Made in Rishikesh, India.">
+<link rel="canonical" href="https://tranquilwaters.in/">
+<meta property="og:title" content="TranquilWaters — apps built in Rishikesh">
+<meta property="og:description" content="Simple, focused mobile apps for daily life.">
+<meta property="og:url" content="https://tranquilwaters.in/">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --ink:#0c2233; --mut:#5b7285; --dim:#8aa0b2;
+    --bg:#f6fafc; --card:#ffffff; --line:#e3edf3;
+    --teal:#0e9f8f; --teal2:#0ea5e9; --gold:#e8a33d;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font:16px/1.6 -apple-system,'SF Pro Text',Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.2px}
+  .logo .m{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#0e9f8f,#0ea5e9);display:flex;align-items:center;justify-content:center;font-size:18px}
+  nav a{color:var(--mut);text-decoration:none;font-size:14px;margin-left:22px;font-weight:600}
+  nav a:hover{color:var(--teal)}
+  /* hero */
+  .hero{padding:72px 0 56px;text-align:center;position:relative;overflow:hidden}
+  .hero h1{font-size:clamp(34px,6vw,58px);line-height:1.12;font-weight:800;letter-spacing:-1px}
+  .hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--teal),var(--teal2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{max-width:560px;margin:18px auto 0;color:var(--mut);font-size:18px}
+  .hero .from{margin-top:26px;font-size:13px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+  .wavebg{position:absolute;inset:auto 0 -2px 0;height:90px;pointer-events:none}
+  /* apps */
+  section{padding:56px 0}
+  h2{font-size:26px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px}
+  .sub{color:var(--mut);margin-bottom:30px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  .app{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:12px;transition:transform .15s ease, box-shadow .15s ease}
+  .app:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(14,40,60,.08)}
+  .app .top{display:flex;align-items:center;gap:14px}
+  .icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .app h3{font-size:18px;font-weight:800}
+  .app .plat{font-size:12px;color:var(--dim);font-weight:600;letter-spacing:.5px}
+  .app p{color:var(--mut);font-size:14.5px;flex:1}
+  .app .cta{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-block;text-decoration:none;font-size:13px;font-weight:700;border-radius:10px;padding:9px 16px}
+  .btn.solid{background:var(--ink);color:#fff}
+  .btn.solid:hover{background:#123a56}
+  .btn.ghost{border:1.5px solid var(--line);color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--teal);color:var(--teal)}
+  .soon{font-size:12px;font-weight:700;color:var(--gold);background:#fdf3e2;border-radius:8px;padding:6px 12px;align-self:flex-start}
+  /* ethos */
+  .ethos{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .ethos .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:26px;margin-top:8px}
+  .ethos h4{font-size:16px;font-weight:800;margin-bottom:6px}
+  .ethos p{color:var(--mut);font-size:14.5px}
+  /* footer */
+  footer{padding:44px 0 56px;color:var(--dim);font-size:13.5px}
+  footer .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+  footer a{color:var(--mut);text-decoration:none;margin-right:18px}
+  footer a:hover{color:var(--teal)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="logo"><div class="m">🌊</div>TranquilWaters</div>
+    <div><a href="#apps">Apps</a><a href="#web">Web</a><a href="#ethos">Ethos</a><a href="#contact">Contact</a></div>
+  </nav>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Simple apps,<br><em>built with care.</em></h1>
+    <p>We build focused mobile apps for daily life — health habits, music practice, festival greetings and more. Available on Google Play and the App Store.</p>
+    <div class="from">Crafted in Rishikesh, India · on the banks of the Ganga</div>
+  </div>
+  <svg class="wavebg" viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,60 C240,20 480,90 720,55 C960,20 1200,80 1440,45 L1440,90 L0,90 Z" fill="#e8f4f6"/></svg>
+</div>
+
+<section id="apps">
+  <div class="wrap">
+    <h2>Our apps</h2>
+    <div class="sub">Live on Google Play and the App Store.</div>
+    <div class="grid">
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e2f4f8">💧</div>
+          <div><h3>Hydrate</h3><div class="plat">ANDROID · iOS</div></div></div>
+        <p>A water reminder that helps you actually drink — smart reminders through the day, an optional Strict Mode, and simple daily tracking.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://apps.apple.com/app/id6793407451">App Store</a>
+          <a class="btn solid" href="https://play.google.com/store/apps/details?id=com.tranquilwaters.waterreminder">Google Play</a>
+          <a class="btn ghost" href="https://hydrate.tranquilwaters.in">Website</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#eee9ff">🎥</div>
+          <div><h3>Unflinch</h3><div class="plat">iOS</div></div></div>
+        <p>A daily on-camera practice app — build speaking confidence with short daily reps and a private video journal of your progress.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://apps.apple.com/app/id6787863777">App Store</a>
+          <a class="btn ghost" href="https://unflinch.tranquilwaters.in">Website</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#fdeee2">🎵</div>
+          <div><h3>Alankar Companion</h3><div class="plat">ANDROID</div></div></div>
+        <p>A practice companion for Indian classical music — alankar patterns, tanpura in every key, and live pitch feedback for your riyaaz.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://play.google.com/store/apps/details?id=com.riyaaz.alankar">Google Play</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#eef6e8">🎼</div>
+          <div><h3>Swar Detector</h3><div class="plat">iOS</div></div></div>
+        <p>Sing a note, see the swar — set your Sa, read pitch in Devanagari or Western names, and watch the ring lock when you hit true pitch.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://apps.apple.com/app/id6795436428">App Store</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#fdeaea">🚩</div>
+          <div><h3>SharePoster</h3><div class="plat">ANDROID</div></div></div>
+        <p>Create festival posters with your own name in seconds — ready to share on WhatsApp and Instagram. Free to use.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://play.google.com/store/apps/details?id=com.shareposter.app">Google Play</a>
+          <a class="btn ghost" href="https://instagram.com/shareposter.app">Instagram</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e8f0ea">📍</div>
+          <div><h3>GPS Camera</h3><div class="plat">ANDROID</div></div></div>
+        <p>Stamp photos with GPS, address, map and time — field-proof geotagged shots for work, travel and site reports.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://play.google.com/store/apps/details?id=com.gpstools.camera">Google Play</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e7f1ff">⏳</div>
+          <div><h3>Soon</h3><div class="plat">iOS</div></div></div>
+        <p>Countdown timers for the days that matter, with home-screen widgets.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://apps.apple.com/app/id6785822803">App Store</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e9f8ec">🌬️</div>
+          <div><h3>Shwaas</h3><div class="plat">iOS</div></div></div>
+        <p>Breathing practice made simple — guided breathwork sessions to calm the mind, one breath at a time.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://apps.apple.com/app/id6739750342">App Store</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#fdf3e2">🙏</div>
+          <div><h3>Gratitude: Mindful Blocking</h3><div class="plat">iOS</div></div></div>
+        <p>Distracting apps stay locked until you write a moment of gratitude — mindful app blocking that turns scrolling into reflection.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://apps.apple.com/app/id6794775770">App Store</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e9f8ec">🧘</div>
+          <div><h3>More on the way</h3><div class="plat">2026</div></div></div>
+        <p>A one-day mindful planner, and more — new apps launching through 2026.</p>
+        <div class="cta"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="web">
+  <div class="wrap">
+    <h2>Our web ventures</h2>
+    <div class="sub">Beyond apps — projects from the TranquilWaters family.</div>
+    <div class="grid">
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e9f8ec">🏔️</div>
+          <div><h3>RetreatDesk</h3><div class="plat">WEB · RISHIKESH</div></div></div>
+        <p>Yoga and wellness retreats in Rishikesh — curated stays, teachers and experiences on the banks of the Ganga.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://retreatdesk.com">retreatdesk.com</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#f0ecdf">🌿</div>
+          <div><h3>Rishikesh Store</h3><div class="plat">WEB · E-COMMERCE</div></div></div>
+        <p>Natural and hemp products from the Himalayan foothills — sourced and shipped from Rishikesh.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://rishikeshstore.com">rishikeshstore.com</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#ece7f2">🌓</div>
+          <div><h3>Shadow Self Work</h3><div class="plat">WEB · INNER WORK</div></div></div>
+        <p>Guided journaling and inner-work practices — launching soon.</p>
+        <div class="cta">
+          <span class="soon">shadowselfwork.com — coming soon</span>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#e2f4f8">💧</div>
+          <div><h3>Hydrate — Web</h3><div class="plat">WEB · APP SITE</div></div></div>
+        <p>Everything about the Hydrate app — features, FAQ and download links.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://hydrate.tranquilwaters.in">hydrate.tranquilwaters.in</a>
+        </div>
+      </div>
+
+      <div class="app">
+        <div class="top"><div class="icon" style="background:#eee9ff">🎥</div>
+          <div><h3>Unflinch — Web</h3><div class="plat">WEB · APP SITE</div></div></div>
+        <p>The Unflinch story — how daily camera reps build unshakeable confidence.</p>
+        <div class="cta">
+          <a class="btn solid" href="https://unflinch.tranquilwaters.in">unflinch.tranquilwaters.in</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="ethos" id="ethos">
+  <div class="wrap">
+    <h2>How we build</h2>
+    <div class="cols">
+      <div><h4>Simple by design</h4><p>Every app does one job well, with a clean interface and no clutter.</p></div>
+      <div><h4>Private & lightweight</h4><p>No accounts where none are needed, no feeds, no dark patterns. Your data stays yours.</p></div>
+      <div><h4>Made in India</h4><p>Designed and built in Rishikesh, Uttarakhand — serving users in India and worldwide.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="row">
+      <div>© 2026 TranquilWaters · RISHIKESH STORE, Tapovan, Rishikesh, India</div>
+      <div>
+        <a href="mailto:vaibhavgupta.rishikesh@gmail.com">Contact</a>
+        <a href="https://hydrate.tranquilwaters.in/privacy-policy.html">Privacy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
