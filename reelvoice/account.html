@@ -26,12 +26,24 @@
         <label>Email<input required type="email" name="email" autocomplete="email" /></label>
         <label>Password<input required type="password" name="password" autocomplete="current-password" minlength="8" /></label>
         <button class="button primary" type="submit">Sign in</button>
+        <div class="auth-divider" aria-hidden="true"><span>or</span></div>
+        <button class="button google" type="button" data-google-signin>
+          <span class="google-mark" aria-hidden="true">G</span>
+          Continue with Google
+        </button>
+        <p class="auth-note">Google sign-in is being connected to your ReelVoice account.</p>
       </form>
       <form class="form" data-form="register" hidden>
         <label>Name <span class="optional">(optional)</span><input type="text" name="displayName" autocomplete="name" /></label>
         <label>Email<input required type="email" name="email" autocomplete="email" /></label>
         <label>Password<input required type="password" name="password" autocomplete="new-password" minlength="8" /></label>
         <button class="button primary" type="submit">Create account</button>
+        <div class="auth-divider" aria-hidden="true"><span>or</span></div>
+        <button class="button google" type="button" data-google-signin>
+          <span class="google-mark" aria-hidden="true">G</span>
+          Continue with Google
+        </button>
+        <p class="auth-note">Use the same Google account across ReelVoice web and Android.</p>
       </form>
       <form class="form" data-form="reset" hidden>
         <label>Email<input required type="email" name="email" autocomplete="email" /></label>
@@ -76,6 +88,9 @@
     document.querySelector('[data-form="login"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Signing in…'); finishAuth(await reelVoiceAuth.login(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in. Please try again.', 'error'); } });
     document.querySelector('[data-form="register"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Creating your account…'); finishAuth(await reelVoiceAuth.register(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not create the account. Please try again.', 'error'); } });
     document.querySelector('[data-form="reset"]').addEventListener('submit', async (event) => { event.preventDefault(); const email = new FormData(event.currentTarget).get('email'); try { await reelVoiceAuth.requestPasswordReset(email); showNotice('If that email is registered, a reset link will arrive shortly.', 'success'); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not request a reset link. Please try again.', 'error'); } });
+    document.querySelectorAll('[data-google-signin]').forEach((button) => button.addEventListener('click', () => {
+      showNotice('Google sign-in is not live yet. The backend OAuth endpoint and Google client ID still need to be configured.', 'info');
+    }));
     document.querySelector('[data-logout]').addEventListener('click', async () => { await reelVoiceAuth.logout(); profile.hidden = true; tabs.forEach((tab) => { tab.hidden = false; }); selectView('login'); showNotice('You are signed out.', 'success'); });
     if (reelVoiceAuth.token) { try { finishAuth(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); } }
   </script>
