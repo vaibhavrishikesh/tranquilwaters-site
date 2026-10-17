@@ -52,6 +52,8 @@
     const forms = [...document.querySelectorAll('[data-form]')];
     const notice = document.querySelector('.notice');
     const profile = document.querySelector('[data-profile]');
+    const returnToCleaning = new URLSearchParams(location.search).get('return') === 'cleaning.html';
+    const finishAuth = (user) => { showProfile(user); if (returnToCleaning) window.location.href = 'cleaning.html#studio'; };
     const showNotice = (message, kind = 'info') => { notice.hidden = false; notice.className = `notice ${kind}`; notice.textContent = message; };
     const selectView = (view) => {
       tabs.forEach((tab) => { const active = tab.dataset.view === view; tab.classList.toggle('active', active); tab.setAttribute('aria-selected', String(active)); });
@@ -71,11 +73,11 @@
     };
 
     tabs.forEach((tab) => tab.addEventListener('click', () => selectView(tab.dataset.view)));
-    document.querySelector('[data-form="login"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Signing in…'); showProfile(await reelVoiceAuth.login(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in. Please try again.', 'error'); } });
-    document.querySelector('[data-form="register"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Creating your account…'); showProfile(await reelVoiceAuth.register(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not create the account. Please try again.', 'error'); } });
+    document.querySelector('[data-form="login"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Signing in…'); finishAuth(await reelVoiceAuth.login(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in. Please try again.', 'error'); } });
+    document.querySelector('[data-form="register"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Creating your account…'); finishAuth(await reelVoiceAuth.register(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not create the account. Please try again.', 'error'); } });
     document.querySelector('[data-form="reset"]').addEventListener('submit', async (event) => { event.preventDefault(); const email = new FormData(event.currentTarget).get('email'); try { await reelVoiceAuth.requestPasswordReset(email); showNotice('If that email is registered, a reset link will arrive shortly.', 'success'); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not request a reset link. Please try again.', 'error'); } });
     document.querySelector('[data-logout]').addEventListener('click', async () => { await reelVoiceAuth.logout(); profile.hidden = true; tabs.forEach((tab) => { tab.hidden = false; }); selectView('login'); showNotice('You are signed out.', 'success'); });
-    if (reelVoiceAuth.token) { try { showProfile(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); } }
+    if (reelVoiceAuth.token) { try { finishAuth(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); } }
   </script>
 </body>
 </html>
