@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#fff8fa" />
   <title>ReelVoice account</title>
   <link rel="stylesheet" href="account.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <main class="shell">
@@ -60,6 +61,7 @@
   <script type="module">
     import { reelVoiceAuth, ReelVoiceAuthError } from './auth-client.js';
 
+    const GOOGLE_CLIENT_ID = '349903809377-3us8s5385kb9agmaa63t1dc3bb1cptek.apps.googleusercontent.com';
     const tabs = [...document.querySelectorAll('[data-view]')];
     const forms = [...document.querySelectorAll('[data-form]')];
     const notice = document.querySelector('.notice');
@@ -88,9 +90,38 @@
     document.querySelector('[data-form="login"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Signing in…'); finishAuth(await reelVoiceAuth.login(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in. Please try again.', 'error'); } });
     document.querySelector('[data-form="register"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Creating your account…'); finishAuth(await reelVoiceAuth.register(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not create the account. Please try again.', 'error'); } });
     document.querySelector('[data-form="reset"]').addEventListener('submit', async (event) => { event.preventDefault(); const email = new FormData(event.currentTarget).get('email'); try { await reelVoiceAuth.requestPasswordReset(email); showNotice('If that email is registered, a reset link will arrive shortly.', 'success'); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not request a reset link. Please try again.', 'error'); } });
-    document.querySelectorAll('[data-google-signin]').forEach((button) => button.addEventListener('click', () => {
-      showNotice('Google sign-in is not live yet. The backend OAuth endpoint and Google client ID still need to be configured.', 'info');
-    }));
+    let googleReady;
+    const loadGoogleIdentity = () => {
+      if (window.google?.accounts?.id) return Promise.resolve();
+      if (!googleReady) googleReady = new Promise((resolve, reject) => {
+        const started = Date.now();
+        const check = () => {
+          if (window.google?.accounts?.id) return resolve();
+          if (Date.now() - started > 8000) return reject(new Error('Google sign-in could not load.'));
+          window.setTimeout(check, 100);
+        };
+        check();
+      });
+      return googleReady;
+    };
+    const startGoogleSignIn = async () => {
+      try {
+        await loadGoogleIdentity();
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async ({ credential }) => {
+            if (!credential) return showNotice('Google sign-in was cancelled.', 'error');
+            try { showNotice('Signing in with Google…'); finishAuth(await reelVoiceAuth.loginWithGoogle(credential)); }
+            catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in with Google. Please try again.', 'error'); }
+          },
+        });
+        showNotice('Choose your Google account…');
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) showNotice('Google sign-in was not displayed. Please try again.', 'error');
+        });
+      } catch (error) { showNotice(error.message || 'Google sign-in could not load.', 'error'); }
+    };
+    document.querySelectorAll('[data-google-signin]').forEach((button) => button.addEventListener('click', startGoogleSignIn));
     document.querySelector('[data-logout]').addEventListener('click', async () => { await reelVoiceAuth.logout(); profile.hidden = true; tabs.forEach((tab) => { tab.hidden = false; }); selectView('login'); showNotice('You are signed out.', 'success'); });
     if (reelVoiceAuth.token) { try { finishAuth(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); } }
   </script>

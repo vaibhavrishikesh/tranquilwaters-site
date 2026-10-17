@@ -75,6 +75,16 @@ export class ReelVoiceAuthClient {
     return data.user;
   }
 
+  async loginWithGoogle(idToken) {
+    const data = await this.request("/auth/google/", {
+      method: "POST",
+      auth: false,
+      body: { id_token: idToken },
+    });
+    this.token = data.token;
+    return data.user;
+  }
+
   async me() {
     if (!this.token) return null;
     try {
