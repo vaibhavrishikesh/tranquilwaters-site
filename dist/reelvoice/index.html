@@ -94,6 +94,11 @@
     .media-meta { display:flex; flex-wrap:wrap; gap:8px 14px; color:#655e6e; font-size:12px; }
     .media-meta strong { color:var(--ink); }
     .preview-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .process-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:4px; }
+    .process-button { border:0; border-radius:999px; padding:10px 15px; color:#fff; background:linear-gradient(100deg,var(--pink),var(--violet)); font:700 12px "DM Sans",sans-serif; cursor:pointer; }
+    .process-button:disabled { opacity:.55; cursor:wait; }
+    .job-status { color:#655e6e; font-size:12px; }
+    .result-link { color:var(--violet); font-size:12px; font-weight:700; }
     .clear-file { border:0; padding:0; color:var(--pink); background:transparent; font:700 12px "DM Sans",sans-serif; cursor:pointer; }
     .demo-note { color:#8a8290; font-size:12px; }
     .ad-slot { display:flex; flex-direction:column; justify-content:center; min-height:100%; padding:28px; border-radius:26px; background:linear-gradient(145deg,#fff0f5,#f1edff); }
@@ -148,7 +153,7 @@
 
     <section class="section"><div class="shell split"><div><p class="section-kicker">Your sound, your mood</p><h2>Choose a feeling. Keep your voice.</h2><p class="section-lede" style="margin-top:20px">From calm and devotional to bold and energetic, background modes are made to support the moment instead of covering it up.</p><a class="button ghost" href="#download" data-conversion="app-download" style="margin-top:28px">Explore in the app</a></div><div class="mode-panel"><div class="mode-line"><span class="mode-swatch"></span><div><strong>Bhakti</strong><span>Temple bells · calm voice</span></div></div><div class="mode-line"><span class="mode-swatch"></span><div><strong>Cricket</strong><span>Stadium roar · bold voice</span></div></div><div class="mode-line"><span class="mode-swatch"></span><div><strong>Confession</strong><span>Whispered · close and honest</span></div></div></div></div></section>
 
-    <section class="section" id="studio"><div class="shell"><div class="section-head"><div><p class="section-kicker">Audio + video, together</p><h2>Bring a clip. Leave with a cleaner story.</h2></div><p class="section-lede">The web studio is in preview. Pick a local file to check the experience; processing will connect to the same audio and video flows as the app.</p></div><div class="studio-demo"><div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose media type"><button class="demo-tab" type="button" role="tab" aria-selected="true" data-media-tab="audio">Audio</button><button class="demo-tab" type="button" role="tab" aria-selected="false" data-media-tab="video">Video</button></div><div class="demo-panel" data-media-panel="audio"><div class="upload-box"><div><strong>Preview a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for now</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" data-media-panel="video" hidden><div class="upload-box"><div><strong>Preview a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for now</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — no file is uploaded.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div></div><span class="demo-note" data-demo-status>Choose a local file to preview it here. Nothing is uploaded.</span></div><aside class="ad-slot"><p class="section-kicker">Built for discovery</p><h3>Room for helpful ads, when the audience is ready.</h3><p>Primary download and trial buttons are tagged as conversion points, so Google Ads can be connected later without changing the page structure.</p></aside></div></div></section>
+    <section class="section" id="studio"><div class="shell"><div class="section-head"><div><p class="section-kicker">Audio + video, together</p><h2>Bring a clip. Leave with a cleaner story.</h2></div><p class="section-lede">Preview files freely, then sign in to run the same cloud processing flows as the app.</p></div><div class="studio-demo"><div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose media type"><button class="demo-tab" type="button" role="tab" aria-selected="true" data-media-tab="audio">Audio</button><button class="demo-tab" type="button" role="tab" aria-selected="false" data-media-tab="video">Video</button></div><div class="demo-panel" data-media-panel="audio"><div class="upload-box"><div><strong>Preview a voice recording</strong><span>MP3, WAV, M4A · preview stays in your browser</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" data-media-panel="video" hidden><div class="upload-box"><div><strong>Preview a video clip</strong><span>MP4, MOV, WEBM · preview stays in your browser</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Nothing is uploaded until you start processing.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status>Sign in to process this file.</span><button class="process-button" type="button" data-process-file disabled>Process securely</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><span class="demo-note" data-demo-status>Choose a local file to preview it here. Nothing is uploaded.</span></div><aside class="ad-slot"><p class="section-kicker">Built for discovery</p><h3>Room for helpful ads, when the audience is ready.</h3><p>Processing and plan limits stay on the ReelVoice API. Analytics will measure the funnel without sending files or account data to Google.</p></aside></div></div></section>
 
     <section class="shell product-band"><p class="eyebrow" style="color:#ffc4d0">Made for real moments</p><h2>One tap from a clean voice to a shareable reel.</h2><p>Record a thought, clean a clip, add a little atmosphere, then get back to the moment. ReelVoice keeps the flow light.</p><a class="button" href="#download" data-conversion="app-download" style="margin-top:18px;background:#fff;color:#2a1d32">Get the app</a></section>
 
@@ -169,6 +174,9 @@
     const fileName = document.querySelector('[data-file-name]');
     const fileSize = document.querySelector('[data-file-size]');
     const fileDuration = document.querySelector('[data-file-duration]');
+    const processButton = document.querySelector('[data-process-file]');
+    const jobStatus = document.querySelector('[data-job-status]');
+    const resultLink = document.querySelector('[data-result-link]');
     let objectUrl = null;
     let activeInput = null;
 
@@ -183,7 +191,7 @@
       const secs = Math.round(seconds % 60).toString().padStart(2, '0');
       return `${mins}:${secs}`;
     };
-    const clearPreview = () => {
+    const clearPreview = ({ preserveInput = null } = {}) => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       objectUrl = null;
       activeInput = null;
@@ -195,7 +203,11 @@
       fileName.textContent = '—';
       fileSize.textContent = '—';
       fileDuration.textContent = 'Duration will appear when ready';
-      document.querySelectorAll('[data-media-input]').forEach((input) => { input.value = ''; });
+      processButton.disabled = true;
+      jobStatus.textContent = 'Sign in to process this file.';
+      resultLink.hidden = true;
+      resultLink.removeAttribute('href');
+      document.querySelectorAll('[data-media-input]').forEach((input) => { if (input !== preserveInput) input.value = ''; });
       status.textContent = 'Choose a local file to preview it here. Nothing is uploaded.';
     };
 
@@ -208,7 +220,7 @@
     document.querySelectorAll('[data-media-input]').forEach((input) => input.addEventListener('change', () => {
       const file = input.files[0];
       if (!file) return;
-      clearPreview();
+      clearPreview({ preserveInput: input });
       activeInput = input;
       objectUrl = URL.createObjectURL(file);
       const media = input.dataset.mediaInput;
@@ -220,6 +232,9 @@
       fileName.textContent = file.name;
       fileSize.textContent = formatBytes(file.size);
       status.textContent = `${file.name} selected — preview only, nothing uploaded.`;
+      processButton.disabled = false;
+      jobStatus.textContent = 'Ready when you are.';
+      if (typeof window.reelVoiceTrack === 'function') window.reelVoiceTrack('upload_selected', { media_type: media });
     }));
     document.querySelector('[data-clear-file]').addEventListener('click', clearPreview);
     document.querySelectorAll('[data-conversion]').forEach((link) => link.addEventListener('click', () => {
@@ -228,6 +243,53 @@
       window.dataLayer.push({ event: 'reelvoice_conversion', conversion });
       if (typeof window.gtag === 'function') window.gtag('event', conversion, { event_category: 'reelvoice' });
     }));
+  </script>
+  <script type="module">
+    import { reelVoiceAuth } from './auth-client.js';
+    import { ReelVoiceProcessingClient, ReelVoiceProcessingError } from './processing-client.js';
+    import { trackReelVoiceEvent } from './analytics.js';
+
+    window.reelVoiceTrack = trackReelVoiceEvent;
+    window.reelVoiceTrack('landing_view');
+
+    const button = document.querySelector('[data-process-file]');
+    const jobStatus = document.querySelector('[data-job-status]');
+    const resultLink = document.querySelector('[data-result-link]');
+    button.addEventListener('click', async () => {
+      const input = document.querySelector('.demo-panel:not([hidden]) [data-media-input]');
+      const file = input?.files?.[0];
+      const mediaType = input?.dataset.mediaInput;
+      if (!file || !mediaType) return;
+      if (!reelVoiceAuth.token) {
+        jobStatus.innerHTML = 'Sign in first — <a href="account.html">open account</a>.';
+        window.reelVoiceTrack('process_auth_required', { media_type: mediaType });
+        return;
+      }
+      button.disabled = true;
+      resultLink.hidden = true;
+      jobStatus.textContent = 'Uploading securely…';
+      window.reelVoiceTrack('job_started', { media_type: mediaType });
+      try {
+        const client = new ReelVoiceProcessingClient({ token: reelVoiceAuth.token });
+        const accepted = await client.submit(file, mediaType);
+        jobStatus.textContent = 'Processing…';
+        const result = await client.poll(accepted.job_id, {
+          onUpdate: (update) => { jobStatus.textContent = update.progress ? `Processing… ${update.progress}%` : 'Processing…'; },
+        });
+        if (result.status !== 'completed') throw new ReelVoiceProcessingError(result.error_message || 'Processing failed.');
+        const outputUrl = mediaType === 'video' ? result.output_video_url : (result.output_audio_url || result.cleaned_url);
+        if (!outputUrl) throw new ReelVoiceProcessingError('The job finished without a downloadable result.');
+        resultLink.href = outputUrl;
+        resultLink.hidden = false;
+        jobStatus.textContent = 'Done — your result is ready.';
+        window.reelVoiceTrack('job_completed', { media_type: mediaType, job_type: accepted.job_type });
+      } catch (error) {
+        jobStatus.textContent = error instanceof ReelVoiceProcessingError ? error.message : 'Could not process this file. Please try again.';
+        window.reelVoiceTrack('job_failed', { media_type: mediaType, error_status: error.status || 'unknown' });
+      } finally {
+        button.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
