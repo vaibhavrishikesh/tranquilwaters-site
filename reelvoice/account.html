@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fff8fa" />
+  <title>ReelVoice account</title>
+  <link rel="stylesheet" href="account.css" />
+</head>
+<body>
+  <main class="shell">
+    <a class="brand" href="index.html" aria-label="Back to ReelVoice home"><span class="brand-mark">↗</span> ReelVoice</a>
+    <section class="account-card" aria-labelledby="account-title">
+      <div class="eyebrow">Your studio account</div>
+      <h1 id="account-title">Keep your work in sync.</h1>
+      <p class="lede">Sign in to view your plan and usage. Your public landing page and on-device recording stay available without an account.</p>
+
+      <div class="tabs" role="tablist" aria-label="Account actions">
+        <button class="tab active" type="button" role="tab" aria-selected="true" data-view="login">Sign in</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-view="register">Create account</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-view="reset">Reset password</button>
+      </div>
+
+      <div class="notice" role="status" aria-live="polite" hidden></div>
+      <form class="form" data-form="login">
+        <label>Email<input required type="email" name="email" autocomplete="email" /></label>
+        <label>Password<input required type="password" name="password" autocomplete="current-password" minlength="8" /></label>
+        <button class="button primary" type="submit">Sign in</button>
+      </form>
+      <form class="form" data-form="register" hidden>
+        <label>Name <span class="optional">(optional)</span><input type="text" name="displayName" autocomplete="name" /></label>
+        <label>Email<input required type="email" name="email" autocomplete="email" /></label>
+        <label>Password<input required type="password" name="password" autocomplete="new-password" minlength="8" /></label>
+        <button class="button primary" type="submit">Create account</button>
+      </form>
+      <form class="form" data-form="reset" hidden>
+        <label>Email<input required type="email" name="email" autocomplete="email" /></label>
+        <button class="button primary" type="submit">Send reset link</button>
+      </form>
+
+      <section class="profile" data-profile hidden aria-labelledby="profile-title">
+        <div class="profile-head"><div><div class="eyebrow">Signed in</div><h2 id="profile-title" data-profile-name>ReelVoice creator</h2><p data-profile-email></p></div><button class="button ghost" type="button" data-logout>Sign out</button></div>
+        <div class="profile-grid"><div><span>Plan</span><strong data-profile-plan>Free</strong></div><div><span>Audio left</span><strong data-profile-audio>—</strong></div><div><span>Video left</span><strong data-profile-video>—</strong></div></div>
+      </section>
+    </section>
+    <p class="back-link"><a href="index.html">← Back to ReelVoice</a></p>
+  </main>
+  <script type="module">
+    import { reelVoiceAuth, ReelVoiceAuthError } from './auth-client.js';
+
+    const tabs = [...document.querySelectorAll('[data-view]')];
+    const forms = [...document.querySelectorAll('[data-form]')];
+    const notice = document.querySelector('.notice');
+    const profile = document.querySelector('[data-profile]');
+    const showNotice = (message, kind = 'info') => { notice.hidden = false; notice.className = `notice ${kind}`; notice.textContent = message; };
+    const selectView = (view) => {
+      tabs.forEach((tab) => { const active = tab.dataset.view === view; tab.classList.toggle('active', active); tab.setAttribute('aria-selected', String(active)); });
+      forms.forEach((form) => { form.hidden = form.dataset.form !== view; });
+      notice.hidden = true;
+    };
+    const showProfile = (user) => {
+      if (!user) return;
+      forms.forEach((form) => { form.hidden = true; });
+      tabs.forEach((tab) => { tab.hidden = true; });
+      profile.hidden = false;
+      document.querySelector('[data-profile-name]').textContent = user.display_name || user.handle || 'ReelVoice creator';
+      document.querySelector('[data-profile-email]').textContent = user.email || '';
+      document.querySelector('[data-profile-plan]').textContent = user.is_pro ? (user.plan || 'Pro') : 'Free';
+      document.querySelector('[data-profile-audio]').textContent = user.entitlements?.voice_minutes_monthly === null ? 'Unlimited' : `${user.free_minutes_left ?? '—'} min`;
+      document.querySelector('[data-profile-video]').textContent = user.entitlements?.video_minutes_monthly === null ? 'Unlimited' : `${user.entitlements?.video_minutes_monthly ?? '—'} min/month`;
+    };
+
+    tabs.forEach((tab) => tab.addEventListener('click', () => selectView(tab.dataset.view)));
+    document.querySelector('[data-form="login"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Signing in…'); showProfile(await reelVoiceAuth.login(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in. Please try again.', 'error'); } });
+    document.querySelector('[data-form="register"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Creating your account…'); showProfile(await reelVoiceAuth.register(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not create the account. Please try again.', 'error'); } });
+    document.querySelector('[data-form="reset"]').addEventListener('submit', async (event) => { event.preventDefault(); const email = new FormData(event.currentTarget).get('email'); try { await reelVoiceAuth.requestPasswordReset(email); showNotice('If that email is registered, a reset link will arrive shortly.', 'success'); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not request a reset link. Please try again.', 'error'); } });
+    document.querySelector('[data-logout]').addEventListener('click', async () => { await reelVoiceAuth.logout(); profile.hidden = true; tabs.forEach((tab) => { tab.hidden = false; }); selectView('login'); showNotice('You are signed out.', 'success'); });
+    if (reelVoiceAuth.token) { try { showProfile(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); } }
+  </script>
+</body>
+</html>
