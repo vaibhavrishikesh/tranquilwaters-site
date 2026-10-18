@@ -100,6 +100,7 @@
     .media-preview { display:grid; gap:10px; padding:14px; border:1px solid var(--line); border-radius:18px; background:#fcf8fc; }
     .media-preview[hidden] { display:none; }
     .media-preview audio, .media-preview video { display:block; width:100%; border-radius:12px; background:#17151d; }
+    .media-preview video { max-height:560px; object-fit:contain; }
     .media-preview audio[hidden], .media-preview video[hidden] { display:none; }
     .media-meta { display:flex; flex-wrap:wrap; gap:8px 14px; color:#655e6e; font-size:12px; }
     .media-meta strong { color:var(--ink); }
@@ -147,7 +148,7 @@
     .dashboard-hero h1 { margin:12px 0 0; max-width:760px; font-size:clamp(2.8rem,5.8vw,5.5rem); }
     .dashboard-hero .hero-copy { margin:0 0 5px; max-width:360px; }
     .dashboard-hero-card { padding:0; border:0; background:transparent; box-shadow:none; }
-    .dashboard-hero-workspace { min-width:0; max-width:100%; margin-top:42px; }
+    .dashboard-hero-workspace { min-width:0; width:min(100%,980px); max-width:100%; margin:42px auto 0; }
     .dashboard-hero-workspace .dashboard-content { margin:0; }
     .dashboard-hero-workspace .demo-card { box-shadow:none; border-color:#eadfeb; }
     .dashboard-hero-workspace .auth-gate { box-shadow:none; }
@@ -291,7 +292,7 @@
           const workerBaseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm';
           const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
           await ffmpeg.load({
-            workerURL: await toBlobURL(`${workerBaseURL}/worker.js`, 'text/javascript'),
+            classWorkerURL: await toBlobURL(`${workerBaseURL}/worker.js`, 'text/javascript'),
             coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
             wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
           });
