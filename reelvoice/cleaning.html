@@ -281,6 +281,10 @@
     };
     window.reelVoiceExtractAudio = extractAudioFromVideo;
     let ffmpegPromise = null;
+    const withTimeout = (promise, timeoutMs, message) => Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(message)), timeoutMs)),
+    ]);
     const loadLosslessMuxer = async () => {
       if (!ffmpegPromise) {
         ffmpegPromise = (async () => {
@@ -291,11 +295,18 @@
           const ffmpeg = new FFmpeg();
           const workerBaseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm';
           const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
-          await ffmpeg.load({
-            classWorkerURL: await toBlobURL(`${workerBaseURL}/worker.js`, 'text/javascript'),
+          const workerResponse = await fetch(`${workerBaseURL}/worker.js`);
+          if (!workerResponse.ok) throw new Error(`Could not load the local merge worker (${workerResponse.status}).`);
+          const workerSource = await workerResponse.text();
+          const workerBlob = new Blob([workerSource
+            .replaceAll('from "./const.js"', `from "${workerBaseURL}/const.js"`)
+            .replaceAll('from "./errors.js"', `from "${workerBaseURL}/errors.js"`)], { type: 'text/javascript' });
+          const classWorkerURL = URL.createObjectURL(workerBlob);
+          await withTimeout(ffmpeg.load({
+            classWorkerURL,
             coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
             wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-          });
+          }), 90000, 'The local merge engine took too long to start. Please try again.');
           return { ffmpeg, fetchFile };
         })().catch((error) => { ffmpegPromise = null; throw error; });
       }
@@ -314,7 +325,7 @@
       const args = outputIsWebm
         ? ['-i', inputName, '-i', audioName, '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'copy', '-c:a', 'libopus', '-b:a', '160k', '-shortest', outputName]
         : ['-i', inputName, '-i', audioName, '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', outputName];
-      await ffmpeg.exec(args);
+      await withTimeout(ffmpeg.exec(args), 120000, 'The local video merge took too long on this device. Download the cleaned audio instead.');
       const data = await ffmpeg.readFile(outputName);
       const mimeType = outputIsWebm ? 'video/webm' : 'video/mp4';
       return new File([data], `${sourceFile.name.replace(/\.[^.]+$/, '')}-cleaned.${outputIsWebm ? 'webm' : 'mp4'}`, { type: mimeType });
