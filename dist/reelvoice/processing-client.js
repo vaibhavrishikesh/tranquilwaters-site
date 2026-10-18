@@ -29,7 +29,11 @@ export class ReelVoiceProcessingClient {
   }
 
   async request(path, { method = "GET", body } = {}) {
-    const headers = { Accept: "application/json", Authorization: `Bearer ${this.token}` };
+    // ReelVoice's web session uses an opaque account token. The processing
+    // endpoints currently accept requests without this header, while DRF's
+    // global JWT authenticator rejects that opaque value when it is sent as
+    // `Authorization: Bearer ...`. Do not advertise it as a JWT here.
+    const headers = { Accept: "application/json" };
     const response = await fetch(`${this.apiBase}${path}`, { method, headers, body });
     if (!response.ok) throw new ReelVoiceProcessingError(await readMessage(response), response.status);
     return response.json();
