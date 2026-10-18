@@ -140,10 +140,14 @@
     .footer-inner { display:flex; justify-content:space-between; gap:20px; }
     .footer-links { display:flex; gap:18px; }
     .dashboard-hero { padding:42px 0 26px; }
-    .dashboard-hero .shell { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr); gap:48px; align-items:center; }
+    .dashboard-hero .shell { display:grid; grid-template-columns:minmax(0,.72fr) minmax(420px,1.28fr); gap:42px; align-items:start; }
     .dashboard-hero h1 { margin:12px 0 0; max-width:760px; font-size:clamp(2.8rem,5.8vw,5.5rem); }
     .dashboard-hero .hero-copy { margin:0 0 5px; max-width:360px; }
-    .dashboard-hero-card { padding:26px; border:1px solid var(--line); border-radius:26px; background:linear-gradient(145deg,#fff,#fff0f6 52%,#f1edff); box-shadow:0 16px 40px rgba(89,38,87,.08); }
+    .dashboard-hero-card { padding:22px; border:1px solid var(--line); border-radius:26px; background:#fff; box-shadow:0 16px 40px rgba(89,38,87,.08); }
+    .dashboard-hero-workspace { min-width:0; }
+    .dashboard-hero-workspace .dashboard-content { margin:0; }
+    .dashboard-hero-workspace .demo-card { box-shadow:none; border-color:#eadfeb; }
+    .dashboard-hero-workspace .auth-gate { box-shadow:none; }
     .dashboard-hero-card .section-kicker { color:var(--violet); }
     .dashboard-hero-card h2 { max-width:330px; margin:10px 0 12px; font-size:clamp(1.65rem,3vw,2.5rem); }
     .dashboard-hero-card p { max-width:340px; margin:0; color:var(--muted); }
@@ -153,11 +157,13 @@
     .dashboard-hero-point strong { font-size:18px; }
     .dashboard-hero-point span { margin-top:2px; color:var(--muted); font-size:11px; line-height:1.3; }
     .dashboard-section { padding-top:48px; }
+    .history-shell[hidden] { display:none; }
+    .history-shell .section-head { margin-bottom:22px; }
     .auth-gate { display:flex; align-items:center; justify-content:space-between; gap:28px; padding:28px 30px; border:1px solid #f1d9e5; border-radius:24px; background:linear-gradient(120deg,#fff,#fff1f6); box-shadow:0 16px 40px rgba(89,38,87,.07); }
     .auth-gate h2 { margin:9px 0 8px; font-size:clamp(1.8rem,3vw,2.8rem); }
     .auth-gate p { margin:0; color:var(--muted); max-width:650px; }
     .dashboard-content[hidden], .auth-gate[hidden] { display:none; }
-    .dashboard-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(290px,.85fr); gap:22px; align-items:start; }
+    .dashboard-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:22px; align-items:start; }
     .history-card { min-height:100%; padding:30px; border:1px solid var(--line); border-radius:26px; background:#fff; box-shadow:0 12px 34px rgba(60,32,65,.05); }
     .history-card h3 { font-size:28px; margin:10px 0 8px; }
     .history-card p { color:var(--muted); margin:0; }
@@ -177,20 +183,19 @@
   </header>
 
   <main id="top">
-    <section class="section dashboard-hero"><div class="shell"><div><p class="section-kicker">ReelVoice workspace</p><h1>Clean a clip with a focused workflow.</h1><p class="hero-copy">Your audio and video tools live here after you sign in.</p></div><aside class="dashboard-hero-card"><p class="section-kicker">One focused workspace</p><h2>Preview first. Process when ready.</h2><p>Keep your original clip local while you choose audio or video cleaning.</p><div class="dashboard-hero-points"><div class="dashboard-hero-point"><strong>01</strong><span>Choose media</span></div><div class="dashboard-hero-point"><strong>02</strong><span>Preview locally</span></div><div class="dashboard-hero-point"><strong>03</strong><span>Clean securely</span></div></div></aside></div></section>
-    <section class="section dashboard-section" id="studio"><div class="shell">
+    <section class="section dashboard-hero" id="studio"><div class="shell"><div><p class="section-kicker">ReelVoice workspace</p><h1>Clean a clip with a focused workflow.</h1><p class="hero-copy">Your audio and video tools live here after you sign in.</p></div><aside class="dashboard-hero-card dashboard-hero-workspace">
       <div class="auth-gate" data-auth-gate>
         <div><p class="section-kicker">Private workspace</p><h2>Sign in before you start cleaning.</h2><p>Your files stay in the dashboard. Sign in first to open audio cleaning, video cleaning and your history.</p></div>
         <a class="button primary" href="account.html?return=cleaning.html#studio">Sign in to continue</a>
       </div>
       <div class="dashboard-content" data-auth-content hidden>
-        <div class="section-head"><div><p class="section-kicker">Cleaning dashboard</p><h2>Choose what you want to clean.</h2></div><p class="section-lede">Preview locally, then run a secure job with your account.</p></div>
-        <div class="dashboard-grid">
-          <div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose a cleaning workspace"><button class="demo-tab" type="button" role="tab" aria-selected="true" aria-controls="audio-studio-panel" data-media-tab="audio"><strong>Audio cleaning</strong><span>Voice notes, podcasts and reels</span></button><button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="video-studio-panel" data-media-tab="video"><strong>Video cleaning</strong><span>Keep the picture, clean the voice</span></button></div><div class="demo-panel" id="audio-studio-panel" role="tabpanel" data-media-panel="audio"><div class="studio-panel-head"><span class="studio-icon">♪</span><div><h3>Clean an audio clip</h3><p>Preview locally, then run Clean audio after you sign in.</p></div></div><div class="upload-box"><div><strong>Choose a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for preview</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" id="video-studio-panel" role="tabpanel" data-media-panel="video" hidden><div class="studio-panel-head"><span class="studio-icon">▶</span><div><h3>Clean a video clip</h3><p>Keep the visuals and make the spoken audio clearer.</p></div></div><div class="upload-box"><div><strong>Choose a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for preview</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — nothing is uploaded yet.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status>Choose a clip to preview it.</span><button class="process-button" type="button" data-process-file disabled>Clean audio</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><p class="studio-login-note">You are signed in. Processing uses your account limits.</p><span class="demo-note" data-demo-status>Choose an audio file to preview it here. Nothing is uploaded.</span></div>
-          <aside class="history-card"><p class="section-kicker">After processing</p><h3>Your history</h3><p data-history-empty>No processed clips yet. Completed audio and video exports will appear here.</p><div class="history-list" data-history-list hidden></div></aside>
-        </div>
+        <div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose a cleaning workspace"><button class="demo-tab" type="button" role="tab" aria-selected="true" aria-controls="audio-studio-panel" data-media-tab="audio"><strong>Audio cleaning</strong><span>Voice notes, podcasts and reels</span></button><button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="video-studio-panel" data-media-tab="video"><strong>Video cleaning</strong><span>Keep the picture, clean the voice</span></button></div><div class="demo-panel" id="audio-studio-panel" role="tabpanel" data-media-panel="audio"><div class="studio-panel-head"><span class="studio-icon">♪</span><div><h3>Clean an audio clip</h3><p>Preview locally, then run Clean audio after you sign in.</p></div></div><div class="upload-box"><div><strong>Choose a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for preview</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" id="video-studio-panel" role="tabpanel" data-media-panel="video" hidden><div class="studio-panel-head"><span class="studio-icon">▶</span><div><h3>Clean a video clip</h3><p>Keep the visuals and make the spoken audio clearer.</p></div></div><div class="upload-box"><div><strong>Choose a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for preview</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — nothing is uploaded yet.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status>Choose a clip to preview it.</span><button class="process-button" type="button" data-process-file disabled>Clean audio</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><p class="studio-login-note">You are signed in. Processing uses your account limits.</p><span class="demo-note" data-demo-status>Choose an audio file to preview it here. Nothing is uploaded.</span></div>
       </div>
-    </div></section>
+    </aside></div></section>
+    <section class="section dashboard-section" aria-label="Cleaning history"><div class="shell"><div class="history-shell" data-history-shell hidden>
+      <div class="section-head"><div><p class="section-kicker">After processing</p><h2>Your history</h2></div><p class="section-lede">Completed audio and video exports will appear here.</p></div>
+      <aside class="history-card"><p data-history-empty>No processed clips yet. Completed audio and video exports will appear here.</p><div class="history-list" data-history-list hidden></div></aside>
+    </div></div></section>
   </main>
   <footer><div class="shell footer-inner"><span>© 2026 ReelVoice · TranquilWaters</span><div class="footer-links"><a href="privacy-policy.html">Privacy</a><a href="terms.html">Terms</a><a href="mailto:vaibhavgupta.rishikesh@gmail.com">Contact</a></div></div></footer>
   <script>
@@ -294,6 +299,7 @@
     const resultLink = document.querySelector('[data-result-link]');
     const historyEmpty = document.querySelector('[data-history-empty]');
     const historyList = document.querySelector('[data-history-list]');
+    const historyShell = document.querySelector('[data-history-shell]');
     const historyKey = 'reelvoice.cleaning.history';
     const readHistory = () => { try { return JSON.parse(localStorage.getItem(historyKey) || '[]'); } catch { return []; } };
     const renderHistory = () => {
@@ -302,8 +308,8 @@
       historyList.hidden = items.length === 0;
       historyList.innerHTML = items.map((item) => `<div class="history-item"><div><strong title="${item.name}">${item.name}</strong><span>${item.mediaType === 'video' ? 'Video' : 'Audio'} · ${new Date(item.createdAt).toLocaleDateString()}</span></div><a href="${item.url}" target="_blank" rel="noopener">Download</a></div>`).join('');
     };
-    const showDashboard = () => { authGate.hidden = true; authContent.hidden = false; renderHistory(); };
-    const showLoginGate = () => { authGate.hidden = false; authContent.hidden = true; };
+    const showDashboard = () => { authGate.hidden = true; authContent.hidden = false; historyShell.hidden = false; renderHistory(); };
+    const showLoginGate = () => { authGate.hidden = false; authContent.hidden = true; historyShell.hidden = true; };
 
     let signedIn = false;
     if (reelVoiceAuth.token) {
