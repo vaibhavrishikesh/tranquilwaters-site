@@ -192,7 +192,7 @@
         <a class="button primary" href="account.html?return=cleaning.html#studio">Sign in to continue</a>
       </div>
       <div class="dashboard-content" data-auth-content hidden>
-      <div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose a cleaning workspace"><button class="demo-tab" type="button" role="tab" aria-selected="true" aria-controls="audio-studio-panel" data-media-tab="audio"><strong>Audio cleaning</strong><span>Voice notes, podcasts and reels</span></button><button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="video-studio-panel" data-media-tab="video"><strong>Video cleaning</strong><span>Keep the picture, clean the voice</span></button></div><div class="demo-panel" id="audio-studio-panel" role="tabpanel" data-media-panel="audio"><div class="studio-panel-head"><span class="studio-icon">♪</span><div><h3>Clean an audio clip</h3><p>Preview locally, then run Clean audio after you sign in.</p></div></div><div class="upload-box"><div><strong>Choose a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for preview</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" id="video-studio-panel" role="tabpanel" data-media-panel="video" hidden><div class="studio-panel-head"><span class="studio-icon">▶</span><div><h3>Clean a video clip</h3><p>Keep the visuals and make the spoken audio clearer.</p></div></div><div class="upload-box"><div><strong>Choose a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for preview · up to 60 minutes</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — nothing is uploaded yet.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status data-state="info" role="status" aria-live="polite">Choose a clip to preview it.</span><button class="process-button" type="button" data-process-file disabled>Clean audio</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><p class="studio-login-note">You are signed in. Processing uses your account limits.</p><span class="demo-note" data-demo-status>Choose an audio file to preview it here. Nothing is uploaded.</span></div>
+      <div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose a cleaning workspace"><button class="demo-tab" type="button" role="tab" aria-selected="true" aria-controls="audio-studio-panel" data-media-tab="audio"><strong>Audio cleaning</strong><span>Voice notes, podcasts and reels</span></button><button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="video-studio-panel" data-media-tab="video"><strong>Video cleaning</strong><span>Keep the picture, clean the voice</span></button></div><div class="demo-panel" id="audio-studio-panel" role="tabpanel" data-media-panel="audio"><div class="studio-panel-head"><span class="studio-icon">♪</span><div><h3>Clean an audio clip</h3><p>Preview locally, then run Clean audio after you sign in.</p></div></div><div class="upload-box"><div><strong>Choose a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for preview</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" id="video-studio-panel" role="tabpanel" data-media-panel="video" hidden><div class="studio-panel-head"><span class="studio-icon">▶</span><div><h3>Clean a video clip</h3><p>Keep the visuals and make the spoken audio clearer.</p></div></div><div class="upload-box"><div><strong>Choose a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for preview · your plan limit applies</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — nothing is uploaded yet.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status data-state="info" role="status" aria-live="polite">Choose a clip to preview it.</span><button class="process-button" type="button" data-process-file disabled>Clean audio</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><p class="studio-login-note">You are signed in. Processing uses your account limits.</p><span class="demo-note" data-demo-status>Choose an audio file to preview it here. Nothing is uploaded.</span></div>
       </div>
     </aside></div></section>
     <section class="section dashboard-section" aria-label="Cleaning history"><div class="shell"><div class="history-shell" data-history-shell hidden>
@@ -231,6 +231,8 @@
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
     };
     const MAX_VIDEO_DURATION_SECONDS = 60 * 60;
+    let videoLimitSeconds = MAX_VIDEO_DURATION_SECONDS;
+    let selectedDurationSeconds = null;
     const formatDuration = (seconds) => {
       if (!Number.isFinite(seconds)) return 'Duration unavailable';
       const mins = Math.floor(seconds / 60);
@@ -241,6 +243,7 @@
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       objectUrl = null;
       activeInput = null;
+      selectedDurationSeconds = null;
       preview.hidden = true;
       audioPreview.hidden = true;
       videoPreview.hidden = true;
@@ -273,12 +276,9 @@
       player.hidden = false;
       player.addEventListener('loadedmetadata', () => {
         const duration = player.duration;
+        selectedDurationSeconds = duration;
         fileDuration.textContent = formatDuration(duration);
-        if (media === 'video' && duration > MAX_VIDEO_DURATION_SECONDS) {
-          setJobStatus(`This video is ${formatDuration(duration)} long. Videos must be 60 minutes or shorter.`, 'error');
-          processButton.disabled = true;
-          status.textContent = 'Trim this video to 60 minutes or less, then choose it again.';
-        }
+        enforceVideoLimit();
       }, { once: true });
       preview.hidden = false;
       fileName.textContent = file.name;
@@ -289,6 +289,18 @@
       processButton.textContent = media === 'video' ? 'Clean video' : 'Clean audio';
       if (typeof window.reelVoiceTrack === 'function') window.reelVoiceTrack('upload_selected', { media_type: media });
     }));
+    const enforceVideoLimit = () => {
+      if (activeInput?.dataset.mediaInput !== 'video' || !Number.isFinite(selectedDurationSeconds)) return;
+      if (selectedDurationSeconds <= videoLimitSeconds) return;
+      const limitMinutes = Math.round(videoLimitSeconds / 60);
+      setJobStatus(`This video is ${formatDuration(selectedDurationSeconds)} long. Your plan supports up to ${limitMinutes} minutes.`, 'error');
+      processButton.disabled = true;
+      status.textContent = `Trim this video to ${limitMinutes} minutes or less, then choose it again.`;
+    };
+    window.addEventListener('reelvoice:video-limit', (event) => {
+      videoLimitSeconds = event.detail?.maxSeconds || MAX_VIDEO_DURATION_SECONDS;
+      enforceVideoLimit();
+    });
     document.querySelector('[data-clear-file]').addEventListener('click', clearPreview);
     document.querySelectorAll('[data-conversion]').forEach((link) => link.addEventListener('click', () => {
       const conversion = link.dataset.conversion;
@@ -326,9 +338,13 @@
     const showLoginGate = () => { authGate.hidden = false; authContent.hidden = true; historyShell.hidden = true; };
 
     let signedIn = false;
+    let currentUser = null;
     if (reelVoiceAuth.token) {
-      try { signedIn = Boolean(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); }
+      try { currentUser = await reelVoiceAuth.me(); signedIn = Boolean(currentUser); } catch { reelVoiceAuth.logoutLocal(); }
     }
+    const configuredVideoMinutes = Number(currentUser?.entitlements?.video_minutes_monthly);
+    const videoMinutes = currentUser?.is_pro ? (Number.isFinite(configuredVideoMinutes) && configuredVideoMinutes > 0 ? configuredVideoMinutes : 60) : 10;
+    window.dispatchEvent(new CustomEvent('reelvoice:video-limit', { detail: { maxSeconds: videoMinutes * 60 } }));
     signedIn ? showDashboard() : showLoginGate();
 
     button.addEventListener('click', async () => {
