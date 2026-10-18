@@ -140,9 +140,18 @@
     .footer-inner { display:flex; justify-content:space-between; gap:20px; }
     .footer-links { display:flex; gap:18px; }
     .dashboard-hero { padding:42px 0 26px; }
-    .dashboard-hero .shell { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr); gap:48px; align-items:end; }
+    .dashboard-hero .shell { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr); gap:48px; align-items:center; }
     .dashboard-hero h1 { margin:12px 0 0; max-width:760px; font-size:clamp(2.8rem,5.8vw,5.5rem); }
     .dashboard-hero .hero-copy { margin:0 0 5px; max-width:360px; }
+    .dashboard-hero-card { padding:26px; border:1px solid var(--line); border-radius:26px; background:linear-gradient(145deg,#fff,#fff0f6 52%,#f1edff); box-shadow:0 16px 40px rgba(89,38,87,.08); }
+    .dashboard-hero-card .section-kicker { color:var(--violet); }
+    .dashboard-hero-card h2 { max-width:330px; margin:10px 0 12px; font-size:clamp(1.65rem,3vw,2.5rem); }
+    .dashboard-hero-card p { max-width:340px; margin:0; color:var(--muted); }
+    .dashboard-hero-points { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:22px; }
+    .dashboard-hero-point { padding:11px 10px; border:1px solid rgba(163,74,199,.14); border-radius:14px; background:rgba(255,255,255,.72); }
+    .dashboard-hero-point strong, .dashboard-hero-point span { display:block; }
+    .dashboard-hero-point strong { font-size:18px; }
+    .dashboard-hero-point span { margin-top:2px; color:var(--muted); font-size:11px; line-height:1.3; }
     .dashboard-section { padding-top:48px; }
     .auth-gate { display:flex; align-items:center; justify-content:space-between; gap:28px; padding:28px 30px; border:1px solid #f1d9e5; border-radius:24px; background:linear-gradient(120deg,#fff,#fff1f6); box-shadow:0 16px 40px rgba(89,38,87,.07); }
     .auth-gate h2 { margin:9px 0 8px; font-size:clamp(1.8rem,3vw,2.8rem); }
@@ -168,7 +177,7 @@
   </header>
 
   <main id="top">
-    <section class="section dashboard-hero"><div class="shell"><div><p class="section-kicker">ReelVoice workspace</p><h1>Clean a clip with a focused workflow.</h1><p class="hero-copy">Your audio and video tools live here after you sign in.</p></div></div></section>
+    <section class="section dashboard-hero"><div class="shell"><div><p class="section-kicker">ReelVoice workspace</p><h1>Clean a clip with a focused workflow.</h1><p class="hero-copy">Your audio and video tools live here after you sign in.</p></div><aside class="dashboard-hero-card"><p class="section-kicker">One focused workspace</p><h2>Preview first. Process when ready.</h2><p>Keep your original clip local while you choose audio or video cleaning.</p><div class="dashboard-hero-points"><div class="dashboard-hero-point"><strong>01</strong><span>Choose media</span></div><div class="dashboard-hero-point"><strong>02</strong><span>Preview locally</span></div><div class="dashboard-hero-point"><strong>03</strong><span>Clean securely</span></div></div></aside></div></section>
     <section class="section dashboard-section" id="studio"><div class="shell">
       <div class="auth-gate" data-auth-gate>
         <div><p class="section-kicker">Private workspace</p><h2>Sign in before you start cleaning.</h2><p>Your files stay in the dashboard. Sign in first to open audio cleaning, video cleaning and your history.</p></div>
