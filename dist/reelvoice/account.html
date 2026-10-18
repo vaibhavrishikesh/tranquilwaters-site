@@ -35,6 +35,7 @@
           <span class="google-mark" aria-hidden="true">G</span>
           Continue with Google
         </button>
+        <div class="google-rendered" data-google-rendered></div>
         <p class="auth-note">Google sign-in is being connected to your ReelVoice account.</p>
       </form>
       <form class="form" data-form="register" hidden>
@@ -47,6 +48,7 @@
           <span class="google-mark" aria-hidden="true">G</span>
           Continue with Google
         </button>
+        <div class="google-rendered" data-google-rendered></div>
         <p class="auth-note">Use the same Google account across ReelVoice web and Android.</p>
       </form>
       <form class="form" data-form="reset" hidden>
@@ -94,6 +96,9 @@
     document.querySelector('[data-form="register"]').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); try { showNotice('Creating your account…'); finishAuth(await reelVoiceAuth.register(data)); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not create the account. Please try again.', 'error'); } });
     document.querySelector('[data-form="reset"]').addEventListener('submit', async (event) => { event.preventDefault(); const email = new FormData(event.currentTarget).get('email'); try { await reelVoiceAuth.requestPasswordReset(email); showNotice('If that email is registered, a reset link will arrive shortly.', 'success'); } catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not request a reset link. Please try again.', 'error'); } });
     let googleReady;
+    let googleInitialized = false;
+    const googleButtons = [...document.querySelectorAll('[data-google-signin]')];
+    const googleTargets = [...document.querySelectorAll('[data-google-rendered]')];
     const loadGoogleIdentity = () => {
       if (window.google?.accounts?.id) return Promise.resolve();
       if (!googleReady) googleReady = new Promise((resolve, reject) => {
@@ -107,24 +112,33 @@
       });
       return googleReady;
     };
-    const startGoogleSignIn = async () => {
+    const setupGoogleSignIn = async () => {
       try {
         await loadGoogleIdentity();
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: async ({ credential }) => {
-            if (!credential) return showNotice('Google sign-in was cancelled.', 'error');
-            try { showNotice('Signing in with Google…'); finishAuth(await reelVoiceAuth.loginWithGoogle(credential)); }
-            catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in with Google. Please try again.', 'error'); }
-          },
+        if (!googleInitialized) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: async ({ credential }) => {
+              if (!credential) return showNotice('Google sign-in was cancelled.', 'error');
+              try { showNotice('Signing in with Google…'); finishAuth(await reelVoiceAuth.loginWithGoogle(credential)); }
+              catch (error) { showNotice(error instanceof ReelVoiceAuthError ? error.message : 'Could not sign in with Google. Please try again.', 'error'); }
+            },
+          });
+          googleInitialized = true;
+        }
+        googleTargets.forEach((target) => {
+          target.hidden = false;
+          target.replaceChildren();
+          window.google.accounts.id.renderButton(target, { theme: 'outline', size: 'large', width: '100%', text: 'continue_with' });
         });
-        showNotice('Choose your Google account…');
-        window.google.accounts.id.prompt((notification) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) showNotice('Google sign-in was not displayed. Please try again.', 'error');
-        });
-      } catch (error) { showNotice(error.message || 'Google sign-in could not load.', 'error'); }
+        googleButtons.forEach((button) => { button.hidden = true; });
+        notice.hidden = true;
+      } catch (error) {
+        showNotice(error.message || 'Google sign-in could not load. Use email and password instead.', 'error');
+      }
     };
-    document.querySelectorAll('[data-google-signin]').forEach((button) => button.addEventListener('click', startGoogleSignIn));
+    googleButtons.forEach((button) => button.addEventListener('click', setupGoogleSignIn));
+    setupGoogleSignIn();
     document.querySelector('[data-logout]').addEventListener('click', async () => { await reelVoiceAuth.logout(); profile.hidden = true; tabs.forEach((tab) => { tab.hidden = false; }); selectView('login'); showNotice('You are signed out.', 'success'); });
     if (reelVoiceAuth.token) { try { finishAuth(await reelVoiceAuth.me()); } catch { reelVoiceAuth.logoutLocal(); } }
   </script>
