@@ -428,7 +428,15 @@
     let signedIn = false;
     let currentUser = null;
     if (reelVoiceAuth.token) {
-      try { currentUser = await reelVoiceAuth.me(); signedIn = Boolean(currentUser); } catch { reelVoiceAuth.logoutLocal(); }
+      try {
+        currentUser = await reelVoiceAuth.me();
+        signedIn = Boolean(currentUser);
+      } catch (error) {
+        // A temporary /auth/me network failure should not throw a signed-in user
+        // back to the login gate. Only an explicit 401 means the session ended.
+        if (error?.status === 401) reelVoiceAuth.logoutLocal();
+        signedIn = Boolean(reelVoiceAuth.token);
+      }
     }
     const configuredVideoMinutes = Number(currentUser?.entitlements?.video_minutes_monthly);
     const videoMinutes = currentUser?.is_pro ? (Number.isFinite(configuredVideoMinutes) && configuredVideoMinutes > 0 ? configuredVideoMinutes : 60) : 10;
