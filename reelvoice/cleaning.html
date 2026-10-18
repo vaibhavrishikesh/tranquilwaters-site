@@ -99,7 +99,11 @@
     .upload-box input { max-width:170px; font-size:12px; }
     .media-preview { display:grid; gap:10px; padding:14px; border:1px solid var(--line); border-radius:18px; background:#fcf8fc; }
     .media-preview[hidden] { display:none; }
-    .media-preview audio, .media-preview video { display:block; width:100%; border-radius:12px; background:#17151d; }
+    .media-preview audio, .media-preview video { display:block; width:100%; border-radius:12px; }
+    .media-preview audio { background:#f7f2f8; color-scheme:light; accent-color:var(--violet); }
+    .media-preview audio::-webkit-media-controls-panel { background:#f7f2f8; }
+    .media-preview audio::-webkit-media-controls-enclosure { background:#f7f2f8; }
+    .media-preview video { background:#17151d; }
     .media-preview video { max-height:560px; object-fit:contain; }
     .media-preview audio[hidden], .media-preview video[hidden] { display:none; }
     .media-meta { display:flex; flex-wrap:wrap; gap:8px 14px; color:#655e6e; font-size:12px; }
