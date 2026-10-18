@@ -192,7 +192,7 @@
         <a class="button primary" href="account.html?return=cleaning.html#studio">Sign in to continue</a>
       </div>
       <div class="dashboard-content" data-auth-content hidden>
-      <div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose a cleaning workspace"><button class="demo-tab" type="button" role="tab" aria-selected="true" aria-controls="audio-studio-panel" data-media-tab="audio"><strong>Audio cleaning</strong><span>Voice notes, podcasts and reels</span></button><button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="video-studio-panel" data-media-tab="video"><strong>Video cleaning</strong><span>Keep the picture, clean the voice</span></button></div><div class="demo-panel" id="audio-studio-panel" role="tabpanel" data-media-panel="audio"><div class="studio-panel-head"><span class="studio-icon">♪</span><div><h3>Clean an audio clip</h3><p>Preview locally, then run Clean audio after you sign in.</p></div></div><div class="upload-box"><div><strong>Choose a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for preview</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" id="video-studio-panel" role="tabpanel" data-media-panel="video" hidden><div class="studio-panel-head"><span class="studio-icon">▶</span><div><h3>Clean a video clip</h3><p>Keep the visuals and make the spoken audio clearer.</p></div></div><div class="upload-box"><div><strong>Choose a video clip</strong><span>MP4, MOV, WEBM · stays in your browser for preview · your plan limit applies</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — nothing is uploaded yet.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status data-state="info" role="status" aria-live="polite">Choose a clip to preview it.</span><button class="process-button" type="button" data-process-file disabled>Clean audio</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><p class="studio-login-note">You are signed in. Processing uses your account limits.</p><span class="demo-note" data-demo-status>Choose an audio file to preview it here. Nothing is uploaded.</span></div>
+      <div class="demo-card"><div class="demo-tabs" role="tablist" aria-label="Choose a cleaning workspace"><button class="demo-tab" type="button" role="tab" aria-selected="true" aria-controls="audio-studio-panel" data-media-tab="audio"><strong>Audio cleaning</strong><span>Voice notes, podcasts and reels</span></button><button class="demo-tab" type="button" role="tab" aria-selected="false" aria-controls="video-studio-panel" data-media-tab="video"><strong>Video cleaning</strong><span>Keep the picture, clean the voice</span></button></div><div class="demo-panel" id="audio-studio-panel" role="tabpanel" data-media-panel="audio"><div class="studio-panel-head"><span class="studio-icon">♪</span><div><h3>Clean an audio clip</h3><p>Preview locally, then run Clean audio after you sign in.</p></div></div><div class="upload-box"><div><strong>Choose a voice recording</strong><span>MP3, WAV, M4A · stays in your browser for preview</span></div><input type="file" accept="audio/*" aria-label="Choose an audio file" data-media-input="audio" /></div></div><div class="demo-panel" id="video-studio-panel" role="tabpanel" data-media-panel="video" hidden><div class="studio-panel-head"><span class="studio-icon">▶</span><div><h3>Clean a video clip</h3><p>Video stays in your browser; only its extracted audio is sent for cleaning.</p></div></div><div class="upload-box"><div><strong>Choose a video clip</strong><span>MP4, MOV, WEBM · video remains local · your audio plan limit applies</span></div><input type="file" accept="video/*" aria-label="Choose a video file" data-media-input="video" /></div></div><div class="media-preview" data-media-preview hidden><audio data-audio-preview controls hidden></audio><video data-video-preview controls playsinline hidden></video><div class="media-meta"><span><strong data-file-name>—</strong></span><span data-file-size>—</span><span data-file-duration>Duration will appear when ready</span></div><div class="preview-actions"><span class="demo-note">Preview only — nothing is uploaded yet.</span><button class="clear-file" type="button" data-clear-file>Choose another file</button></div><div class="process-actions"><span class="job-status" data-job-status data-state="info" role="status" aria-live="polite">Choose a clip to preview it.</span><button class="process-button" type="button" data-process-file disabled>Clean audio</button><a class="result-link" data-result-link hidden target="_blank" rel="noopener">Download result</a></div></div><p class="studio-login-note">You are signed in. Processing uses your account limits.</p><span class="demo-note" data-demo-status>Choose an audio file to preview it here. Nothing is uploaded.</span></div>
       </div>
     </aside></div></section>
     <section class="section dashboard-section" aria-label="Cleaning history"><div class="shell"><div class="history-shell" data-history-shell hidden>
@@ -215,12 +215,14 @@
     const jobStatus = document.querySelector('[data-job-status]');
     const setJobStatus = (message, state = 'info') => { jobStatus.textContent = message; jobStatus.dataset.state = state; };
     const resultLink = document.querySelector('[data-result-link]');
+    const chooseResultLabel = (media) => media === 'video' ? 'Download cleaned audio' : 'Download result';
     let objectUrl = null;
     let activeInput = null;
     const selectMedia = (media, updateHash = true) => {
       tabs.forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.mediaTab === media)));
       panels.forEach((panel) => { panel.hidden = panel.dataset.mediaPanel !== media; });
       processButton.textContent = media === 'video' ? 'Clean video' : 'Clean audio';
+      if (media === 'video') processButton.textContent = 'Clean voice only';
       status.textContent = activeInput?.dataset.mediaInput === media ? `${fileName.textContent} selected — preview only.` : `Choose a ${media} file to preview it here. Nothing is uploaded.`;
       if (updateHash) history.replaceState(null, '', `#${media}-studio`);
     };
@@ -239,6 +241,44 @@
       const secs = Math.round(seconds % 60).toString().padStart(2, '0');
       return `${mins}:${secs}`;
     };
+    const extractAudioFromVideo = async (file, player, onProgress) => {
+      const capture = player.captureStream || player.mozCaptureStream;
+      if (typeof capture !== 'function') {
+        throw new Error('This browser cannot extract video audio locally. Choose an audio file instead.');
+      }
+      if (typeof MediaRecorder === 'undefined') throw new Error('This browser cannot create a local audio preview from this video.');
+      const stream = capture.call(player);
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks.length) throw new Error('This video does not contain an audio track.');
+      const mimeType = ['audio/webm;codecs=opus', 'audio/webm'].find((type) => MediaRecorder.isTypeSupported(type));
+      if (!mimeType) throw new Error('This browser cannot create a local audio preview from this video.');
+      const recorder = new MediaRecorder(new MediaStream(audioTracks), { mimeType });
+      const chunks = [];
+      const recording = new Promise((resolve, reject) => {
+        recorder.addEventListener('dataavailable', (event) => { if (event.data.size) chunks.push(event.data); });
+        recorder.addEventListener('error', () => reject(new Error('Could not extract audio from this video.')), { once: true });
+        recorder.addEventListener('stop', () => resolve(new Blob(chunks, { type: mimeType })), { once: true });
+      });
+      const stop = () => { if (recorder.state !== 'inactive') recorder.stop(); };
+      player.currentTime = 0;
+      player.addEventListener('ended', stop, { once: true });
+      recorder.start(1000);
+      try {
+        await player.play();
+        while (recorder.state !== 'inactive') {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          onProgress?.(player.duration ? Math.min(100, Math.round((player.currentTime / player.duration) * 100)) : 0);
+          if (player.ended) stop();
+        }
+        const blob = await recording;
+        return new File([blob], `${file.name.replace(/\.[^.]+$/, '')}.webm`, { type: mimeType });
+      } finally {
+        stop();
+        player.pause();
+        audioTracks.forEach((track) => track.stop());
+      }
+    };
+    window.reelVoiceExtractAudio = extractAudioFromVideo;
     const clearPreview = ({ preserveInput = null } = {}) => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       objectUrl = null;
@@ -286,7 +326,7 @@
       status.textContent = `${file.name} selected — preview only, nothing uploaded.`;
       processButton.disabled = media === 'video' && Number.isFinite(player.duration) && player.duration > MAX_VIDEO_DURATION_SECONDS;
       setJobStatus(`Preview ready. Sign in to ${media === 'video' ? 'clean video' : 'clean audio'}.`);
-      processButton.textContent = media === 'video' ? 'Clean video' : 'Clean audio';
+      processButton.textContent = media === 'video' ? 'Clean voice only' : 'Clean audio';
       if (typeof window.reelVoiceTrack === 'function') window.reelVoiceTrack('upload_selected', { media_type: media });
     }));
     const enforceVideoLimit = () => {
@@ -332,7 +372,7 @@
       const items = readHistory();
       historyEmpty.hidden = items.length > 0;
       historyList.hidden = items.length === 0;
-      historyList.innerHTML = items.map((item) => `<div class="history-item"><div><strong title="${item.name}">${item.name}</strong><span>${item.mediaType === 'video' ? 'Video' : 'Audio'} · ${new Date(item.createdAt).toLocaleDateString()}</span></div><a href="${item.url}" target="_blank" rel="noopener">Download</a></div>`).join('');
+      historyList.innerHTML = items.map((item) => `<div class="history-item"><div><strong title="${item.name}">${item.name}</strong><span>${item.mediaType === 'video' ? 'Video' : item.mediaType === 'video-audio' ? 'Video audio' : 'Audio'} · ${new Date(item.createdAt).toLocaleDateString()}</span></div><a href="${item.url}" target="_blank" rel="noopener">Download</a></div>`).join('');
     };
     const showDashboard = () => { authGate.hidden = true; authContent.hidden = false; historyShell.hidden = false; renderHistory(); };
     const showLoginGate = () => { authGate.hidden = false; authContent.hidden = true; historyShell.hidden = true; };
@@ -350,32 +390,42 @@
     button.addEventListener('click', async () => {
       if (!signedIn) { window.location.href = 'account.html?return=cleaning.html#studio'; return; }
       const input = document.querySelector('.demo-panel:not([hidden]) [data-media-input]');
-      const file = input?.files?.[0];
-      const mediaType = input?.dataset.mediaInput;
-      if (!file || !mediaType) return;
+      const sourceFile = input?.files?.[0];
+      const selectedMediaType = input?.dataset.mediaInput;
+      if (!sourceFile || !selectedMediaType) return;
       button.disabled = true;
       resultLink.hidden = true;
-      setJobStatus('Uploading securely…');
-      window.reelVoiceTrack('job_started', { media_type: mediaType });
+      setJobStatus(selectedMediaType === 'video' ? 'Extracting audio locally…' : 'Uploading securely…');
+      window.reelVoiceTrack('job_started', { media_type: selectedMediaType });
       try {
+        let file = sourceFile;
+        let mediaType = selectedMediaType;
+        if (selectedMediaType === 'video') {
+          file = await window.reelVoiceExtractAudio(sourceFile, videoPreview, (progress) => {
+            setJobStatus(`Extracting audio locally… ${progress}%`);
+          });
+          mediaType = 'audio';
+          setJobStatus('Uploading extracted audio securely…');
+        }
         const client = new ReelVoiceProcessingClient({ token: reelVoiceAuth.token });
         const accepted = await client.submit(file, mediaType);
         setJobStatus('Processing…');
         const result = await client.poll(accepted.job_id, { onUpdate: (update) => { setJobStatus(update.progress ? `Processing… ${update.progress}%` : 'Processing…'); } });
         if (result.status !== 'completed') throw new ReelVoiceProcessingError(readProcessingError(result));
-        const outputUrl = mediaType === 'video' ? result.output_video_url : (result.output_audio_url || result.cleaned_url);
+        const outputUrl = result.output_audio_url || result.cleaned_url || result.output_video_url;
         if (!outputUrl) throw new ReelVoiceProcessingError('The job finished without a downloadable result.');
         resultLink.href = outputUrl;
+        resultLink.textContent = selectedMediaType === 'video' ? 'Download cleaned audio' : 'Download result';
         resultLink.hidden = false;
-        setJobStatus('Done — your result is ready.', 'success');
-        const history = readHistory().filter((item) => item.name !== file.name);
-        history.unshift({ name: file.name, mediaType, url: outputUrl, createdAt: new Date().toISOString() });
+        setJobStatus(selectedMediaType === 'video' ? 'Done — cleaned audio is ready. Your video stayed local.' : 'Done — your result is ready.', 'success');
+        const history = readHistory().filter((item) => item.name !== sourceFile.name);
+        history.unshift({ name: sourceFile.name, mediaType: selectedMediaType === 'video' ? 'video-audio' : mediaType, url: outputUrl, createdAt: new Date().toISOString() });
         localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 8)));
         renderHistory();
-        window.reelVoiceTrack('job_completed', { media_type: mediaType, job_type: accepted.job_type });
+        window.reelVoiceTrack('job_completed', { media_type: selectedMediaType, job_type: accepted.job_type });
       } catch (error) {
-        setJobStatus(error instanceof ReelVoiceProcessingError ? error.message : 'Could not process this file. Please try again.', 'error');
-        window.reelVoiceTrack('job_failed', { media_type: mediaType, error_status: error.status || 'unknown' });
+        setJobStatus(error instanceof ReelVoiceProcessingError || error instanceof Error ? error.message : 'Could not process this file. Please try again.', 'error');
+        window.reelVoiceTrack('job_failed', { media_type: selectedMediaType, error_status: error.status || 'unknown' });
       } finally { button.disabled = false; }
     });
   </script>
