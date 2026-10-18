@@ -279,56 +279,42 @@
       }
     };
     window.reelVoiceExtractAudio = extractAudioFromVideo;
-    const muxVideoWithAudio = async (sourceFile, cleanedAudioUrl, player, onProgress) => {
-      const videoCapture = player.captureStream || player.mozCaptureStream;
-      if (typeof videoCapture !== 'function' || typeof MediaRecorder === 'undefined') {
-        throw new Error('This browser cannot merge the cleaned audio into the video locally.');
+    let ffmpegPromise = null;
+    const loadLosslessMuxer = async () => {
+      if (!ffmpegPromise) {
+        ffmpegPromise = (async () => {
+          const [{ FFmpeg }, { fetchFile, toBlobURL }] = await Promise.all([
+            import('https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/+esm'),
+            import('https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/+esm'),
+          ]);
+          const ffmpeg = new FFmpeg();
+          const baseURL = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
+          await ffmpeg.load({
+            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+          });
+          return { ffmpeg, fetchFile };
+        })().catch((error) => { ffmpegPromise = null; throw error; });
       }
-      const audio = document.createElement('audio');
-      audio.crossOrigin = 'anonymous';
-      audio.src = cleanedAudioUrl;
-      audio.preload = 'auto';
-      const audioCapture = audio.captureStream || audio.mozCaptureStream;
-      if (typeof audioCapture !== 'function') throw new Error('This browser cannot merge the cleaned audio into the video locally.');
-      await new Promise((resolve, reject) => {
-        audio.addEventListener('loadedmetadata', resolve, { once: true });
-        audio.addEventListener('error', () => reject(new Error('The cleaned audio could not be loaded for local video merge.')), { once: true });
-        audio.load();
-      });
-      const videoStream = videoCapture.call(player);
-      const audioStream = audioCapture.call(audio);
-      const tracks = [...videoStream.getVideoTracks(), ...audioStream.getAudioTracks()];
-      if (tracks.length < 2) throw new Error('The browser could not prepare local video and audio tracks.');
-      const mimeType = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find((type) => MediaRecorder.isTypeSupported(type));
-      if (!mimeType) throw new Error('This browser cannot export a merged video locally.');
-      const recorder = new MediaRecorder(new MediaStream(tracks), { mimeType });
-      const chunks = [];
-      const recording = new Promise((resolve, reject) => {
-        recorder.addEventListener('dataavailable', (event) => { if (event.data.size) chunks.push(event.data); });
-        recorder.addEventListener('error', () => reject(new Error('Local video merge failed.')), { once: true });
-        recorder.addEventListener('stop', () => resolve(new Blob(chunks, { type: mimeType })), { once: true });
-      });
-      const stop = () => { if (recorder.state !== 'inactive') recorder.stop(); };
-      player.currentTime = 0;
-      audio.currentTime = 0;
-      player.addEventListener('ended', stop, { once: true });
-      recorder.start(1000);
-      try {
-        await Promise.all([player.play(), audio.play()]);
-        while (recorder.state !== 'inactive') {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          onProgress?.(player.duration ? Math.min(100, Math.round((player.currentTime / player.duration) * 100)) : 0);
-          if (player.ended) stop();
-        }
-        const blob = await recording;
-        return new File([blob], `${sourceFile.name.replace(/\.[^.]+$/, '')}-cleaned.webm`, { type: mimeType });
-      } finally {
-        stop();
-        player.pause();
-        audio.pause();
-        tracks.forEach((track) => track.stop());
-        audio.removeAttribute('src');
-      }
+      return ffmpegPromise;
+    };
+    const muxVideoWithAudio = async (sourceFile, cleanedAudioUrl, _player, onProgress) => {
+      const { ffmpeg, fetchFile } = await loadLosslessMuxer();
+      const sourceExtension = (sourceFile.name.split('.').pop() || 'mp4').toLowerCase();
+      const outputIsWebm = sourceExtension === 'webm';
+      const inputName = `input.${sourceExtension}`;
+      const outputName = outputIsWebm ? 'cleaned.webm' : 'cleaned.mp4';
+      const audioName = 'cleaned-audio';
+      await ffmpeg.writeFile(inputName, await fetchFile(sourceFile));
+      await ffmpeg.writeFile(audioName, await fetchFile(cleanedAudioUrl));
+      ffmpeg.on('progress', ({ progress }) => onProgress?.(Math.max(0, Math.min(100, Math.round(progress * 100)))));
+      const args = outputIsWebm
+        ? ['-i', inputName, '-i', audioName, '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'copy', '-c:a', 'libopus', '-b:a', '160k', '-shortest', outputName]
+        : ['-i', inputName, '-i', audioName, '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', outputName];
+      await ffmpeg.exec(args);
+      const data = await ffmpeg.readFile(outputName);
+      const mimeType = outputIsWebm ? 'video/webm' : 'video/mp4';
+      return new File([data], `${sourceFile.name.replace(/\.[^.]+$/, '')}-cleaned.${outputIsWebm ? 'webm' : 'mp4'}`, { type: mimeType });
     };
     window.reelVoiceMuxVideo = muxVideoWithAudio;
     const clearPreview = ({ preserveInput = null } = {}) => {
@@ -393,7 +379,11 @@
       videoLimitSeconds = event.detail?.maxSeconds || MAX_VIDEO_DURATION_SECONDS;
       enforceVideoLimit();
     });
-    document.querySelector('[data-clear-file]').addEventListener('click', clearPreview);
+    document.querySelector('[data-clear-file]').addEventListener('click', () => {
+      const input = document.querySelector('.demo-panel:not([hidden]) [data-media-input]');
+      clearPreview();
+      input?.click();
+    });
     document.querySelectorAll('[data-conversion]').forEach((link) => link.addEventListener('click', () => {
       const conversion = link.dataset.conversion;
       window.dataLayer = window.dataLayer || [];
@@ -477,7 +467,7 @@
         let outputMediaType = selectedMediaType;
         if (selectedMediaType === 'video' && cleanedAudioUrl) {
           const sourceDuration = Number(document.querySelector('[data-video-preview]')?.duration);
-          setJobStatus(`Cleaning complete. Merging locally… 0% (about ${formatDurationForStatus(sourceDuration)} on this device)`);
+          setJobStatus(`Cleaning complete. Preparing a quality-preserving local merge… (about ${formatDurationForStatus(sourceDuration)} on this device)`);
           try {
             const mergedVideo = await window.reelVoiceMuxVideo(sourceFile, cleanedAudioUrl, videoPreview, (progress) => {
               setJobStatus(`Merging cleaned audio locally… ${progress}%`);
