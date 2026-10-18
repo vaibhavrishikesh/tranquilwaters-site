@@ -260,10 +260,16 @@
         recorder.addEventListener('error', () => reject(new Error('Could not extract audio from this video.')), { once: true });
         recorder.addEventListener('stop', () => resolve(new Blob(chunks, { type: mimeType })), { once: true });
       });
-      const stop = () => { if (recorder.state !== 'inactive') recorder.stop(); };
+      let stopRequested = false;
+      const stop = () => {
+        if (stopRequested || recorder.state === 'inactive') return;
+        stopRequested = true;
+        try { recorder.requestData(); } catch { /* stop still flushes the final chunk */ }
+        recorder.stop();
+      };
       player.currentTime = 0;
       player.addEventListener('ended', stop, { once: true });
-      recorder.start(1000);
+      recorder.start();
       try {
         await player.play();
         while (recorder.state !== 'inactive') {
@@ -272,6 +278,7 @@
           if (player.ended) stop();
         }
         const blob = await recording;
+        if (blob.size < 512) throw new Error('Could not extract a usable audio track from this video.');
         return new File([blob], `${file.name.replace(/\.[^.]+$/, '')}.webm`, { type: mimeType });
       } finally {
         stop();
