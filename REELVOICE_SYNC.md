@@ -46,6 +46,7 @@
 | 18 Oct 2026 | Web | Google login on production | Passed; account session returned to cleaning dashboard |
 | 18 Oct 2026 | Android / Play Console | Annual plan activated | `pro_annual`, ₹599/year, active per Android handoff |
 | 18 Oct 2026 | Web | Audio cleaning | Upload, processing, polling, and cleaned output playback passed |
+| 18 Oct 2026 | Web | Error handling / layout | `1c08cf3` pushed; nested API errors are shown clearly and source/dist are synced |
 |  |  | Signed AAB uploaded |  |
 |  |  | Internal tester purchase/restore |  |
 
