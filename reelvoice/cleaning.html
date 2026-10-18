@@ -279,6 +279,58 @@
       }
     };
     window.reelVoiceExtractAudio = extractAudioFromVideo;
+    const muxVideoWithAudio = async (sourceFile, cleanedAudioUrl, player, onProgress) => {
+      const videoCapture = player.captureStream || player.mozCaptureStream;
+      if (typeof videoCapture !== 'function' || typeof MediaRecorder === 'undefined') {
+        throw new Error('This browser cannot merge the cleaned audio into the video locally.');
+      }
+      const audio = document.createElement('audio');
+      audio.crossOrigin = 'anonymous';
+      audio.src = cleanedAudioUrl;
+      audio.preload = 'auto';
+      const audioCapture = audio.captureStream || audio.mozCaptureStream;
+      if (typeof audioCapture !== 'function') throw new Error('This browser cannot merge the cleaned audio into the video locally.');
+      await new Promise((resolve, reject) => {
+        audio.addEventListener('loadedmetadata', resolve, { once: true });
+        audio.addEventListener('error', () => reject(new Error('The cleaned audio could not be loaded for local video merge.')), { once: true });
+        audio.load();
+      });
+      const videoStream = videoCapture.call(player);
+      const audioStream = audioCapture.call(audio);
+      const tracks = [...videoStream.getVideoTracks(), ...audioStream.getAudioTracks()];
+      if (tracks.length < 2) throw new Error('The browser could not prepare local video and audio tracks.');
+      const mimeType = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find((type) => MediaRecorder.isTypeSupported(type));
+      if (!mimeType) throw new Error('This browser cannot export a merged video locally.');
+      const recorder = new MediaRecorder(new MediaStream(tracks), { mimeType });
+      const chunks = [];
+      const recording = new Promise((resolve, reject) => {
+        recorder.addEventListener('dataavailable', (event) => { if (event.data.size) chunks.push(event.data); });
+        recorder.addEventListener('error', () => reject(new Error('Local video merge failed.')), { once: true });
+        recorder.addEventListener('stop', () => resolve(new Blob(chunks, { type: mimeType })), { once: true });
+      });
+      const stop = () => { if (recorder.state !== 'inactive') recorder.stop(); };
+      player.currentTime = 0;
+      audio.currentTime = 0;
+      player.addEventListener('ended', stop, { once: true });
+      recorder.start(1000);
+      try {
+        await Promise.all([player.play(), audio.play()]);
+        while (recorder.state !== 'inactive') {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          onProgress?.(player.duration ? Math.min(100, Math.round((player.currentTime / player.duration) * 100)) : 0);
+          if (player.ended) stop();
+        }
+        const blob = await recording;
+        return new File([blob], `${sourceFile.name.replace(/\.[^.]+$/, '')}-cleaned.webm`, { type: mimeType });
+      } finally {
+        stop();
+        player.pause();
+        audio.pause();
+        tracks.forEach((track) => track.stop());
+        audio.removeAttribute('src');
+      }
+    };
+    window.reelVoiceMuxVideo = muxVideoWithAudio;
     const clearPreview = ({ preserveInput = null } = {}) => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       objectUrl = null;
@@ -367,6 +419,12 @@
     const historyList = document.querySelector('[data-history-list]');
     const historyShell = document.querySelector('[data-history-shell]');
     const historyKey = 'reelvoice.cleaning.history';
+    const formatDurationForStatus = (seconds) => {
+      if (!Number.isFinite(seconds)) return 'the video duration';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.round(seconds % 60).toString().padStart(2, '0');
+      return `${mins}:${secs}`;
+    };
     const readHistory = () => { try { return JSON.parse(localStorage.getItem(historyKey) || '[]'); } catch { return []; } };
     const renderHistory = () => {
       const items = readHistory();
@@ -412,15 +470,39 @@
         setJobStatus('Processing…');
         const result = await client.poll(accepted.job_id, { onUpdate: (update) => { setJobStatus(update.progress ? `Processing… ${update.progress}%` : 'Processing…'); } });
         if (result.status !== 'completed') throw new ReelVoiceProcessingError(readProcessingError(result));
-        const outputUrl = result.output_audio_url || result.cleaned_url || result.output_video_url;
-        if (!outputUrl) throw new ReelVoiceProcessingError('The job finished without a downloadable result.');
+        const cleanedAudioUrl = result.output_audio_url || result.cleaned_url;
+        const serverVideoUrl = result.output_video_url;
+        if (!cleanedAudioUrl && !serverVideoUrl) throw new ReelVoiceProcessingError('The job finished without a downloadable result.');
+        let outputUrl = selectedMediaType === 'video' ? serverVideoUrl || cleanedAudioUrl : cleanedAudioUrl || serverVideoUrl;
+        let outputMediaType = selectedMediaType;
+        if (selectedMediaType === 'video' && cleanedAudioUrl) {
+          const sourceDuration = Number(document.querySelector('[data-video-preview]')?.duration);
+          setJobStatus(`Cleaning complete. Merging locally… 0% (about ${formatDurationForStatus(sourceDuration)} on this device)`);
+          try {
+            const mergedVideo = await window.reelVoiceMuxVideo(sourceFile, cleanedAudioUrl, videoPreview, (progress) => {
+              setJobStatus(`Merging cleaned audio locally… ${progress}%`);
+            });
+            outputUrl = URL.createObjectURL(mergedVideo);
+            outputMediaType = 'video';
+            resultLink.textContent = 'Download cleaned video';
+            setJobStatus('Done — cleaned video is ready. Your original video stayed local.', 'success');
+          } catch (mergeError) {
+            outputUrl = cleanedAudioUrl;
+            outputMediaType = 'video-audio';
+            resultLink.textContent = 'Download cleaned audio';
+            setJobStatus(`Audio cleaned, but this browser could not merge the video locally: ${mergeError.message}`, 'error');
+          }
+        } else {
+          resultLink.textContent = 'Download result';
+          setJobStatus('Done — your result is ready.', 'success');
+        }
         resultLink.href = outputUrl;
-        resultLink.textContent = selectedMediaType === 'video' ? 'Download cleaned audio' : 'Download result';
         resultLink.hidden = false;
-        setJobStatus(selectedMediaType === 'video' ? 'Done — cleaned audio is ready. Your video stayed local.' : 'Done — your result is ready.', 'success');
         const history = readHistory().filter((item) => item.name !== sourceFile.name);
-        history.unshift({ name: sourceFile.name, mediaType: selectedMediaType === 'video' ? 'video-audio' : mediaType, url: outputUrl, createdAt: new Date().toISOString() });
-        localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 8)));
+        if (!outputUrl.startsWith('blob:')) {
+          history.unshift({ name: sourceFile.name, mediaType: outputMediaType, url: outputUrl, createdAt: new Date().toISOString() });
+          localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 8)));
+        }
         renderHistory();
         window.reelVoiceTrack('job_completed', { media_type: selectedMediaType, job_type: accepted.job_type });
       } catch (error) {
