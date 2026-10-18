@@ -290,7 +290,7 @@
   </script>
   <script type="module">
     import { reelVoiceAuth } from './auth-client.js';
-    import { ReelVoiceProcessingClient, ReelVoiceProcessingError } from './processing-client.js';
+    import { ReelVoiceProcessingClient, ReelVoiceProcessingError, readProcessingError } from './processing-client.js';
     import { trackReelVoiceEvent } from './analytics.js';
 
     window.reelVoiceTrack = trackReelVoiceEvent;
@@ -337,7 +337,7 @@
         const accepted = await client.submit(file, mediaType);
         setJobStatus('Processing…');
         const result = await client.poll(accepted.job_id, { onUpdate: (update) => { setJobStatus(update.progress ? `Processing… ${update.progress}%` : 'Processing…'); } });
-        if (result.status !== 'completed') throw new ReelVoiceProcessingError(result.error_message || 'Processing failed.');
+        if (result.status !== 'completed') throw new ReelVoiceProcessingError(readProcessingError(result));
         const outputUrl = mediaType === 'video' ? result.output_video_url : (result.output_audio_url || result.cleaned_url);
         if (!outputUrl) throw new ReelVoiceProcessingError('The job finished without a downloadable result.');
         resultLink.href = outputUrl;

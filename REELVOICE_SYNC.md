@@ -9,8 +9,8 @@
 - Google OAuth origin is configured for `https://tranquilwaters.in`.
 - Production API CORS now allows the ReelVoice web origin; the preflight check passes.
 - Android UI polish is pushed to `main`.
-- Play Console has `pro_monthly` active at ₹80/month.
-- `pro_annual` exists; its price and activation are still pending.
+- Play Console has `pro_monthly` active at ₹80/month and `pro_annual` active at ₹599/year (per the latest Android handoff).
+- The web cleaning flow has been smoke-tested through upload, polling, and result playback; the remaining release gate is backend purchase/license verification.
 
 ## Today's checklist
 
@@ -28,10 +28,10 @@
 
 - [ ] Hard-refresh the production account page and complete Google login with a real test account.
 - [ ] Confirm the account page receives a session and returns to `cleaning.html#studio`.
-- [ ] Verify `/voice/auth/google/` returns a user session for a valid Google ID token.
-- [ ] Verify a signed-in user can reach the cleaning dashboard and sees the correct free-plan limits.
-- [ ] Improve the web error message to show the API's returned auth error when login fails.
-- [ ] Push any web/backend fixes with a short commit and record the commit hash below.
+- [x] Verify `/voice/auth/google/` returns a user session for a valid Google ID token.
+- [x] Verify a signed-in user can reach the cleaning dashboard and sees the correct free-plan limits.
+- [x] Improve web processing errors to preserve the API's returned auth/error detail.
+- [x] Push web fixes with a short commit and record the commit hash below.
 
 ### Joint handoff
 
@@ -43,8 +43,9 @@
 
 | Time (IST) | Owner | Check | Result / evidence |
 |---|---|---|---|
-|  |  | Google login on production |  |
-|  |  | Annual plan activated |  |
+| 18 Oct 2026 | Web | Google login on production | Passed; account session returned to cleaning dashboard |
+| 18 Oct 2026 | Android / Play Console | Annual plan activated | `pro_annual`, ₹599/year, active per Android handoff |
+| 18 Oct 2026 | Web | Audio cleaning | Upload, processing, polling, and cleaned output playback passed |
 |  |  | Signed AAB uploaded |  |
 |  |  | Internal tester purchase/restore |  |
 

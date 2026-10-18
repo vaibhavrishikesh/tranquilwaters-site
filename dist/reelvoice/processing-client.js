@@ -8,13 +8,37 @@ export class ReelVoiceProcessingError extends Error {
   }
 }
 
+const stringifyError = (value) => {
+  if (!value) return '';
+  if (typeof value === 'string') return value.trim();
+  if (Array.isArray(value)) return value.map(stringifyError).filter(Boolean).join(', ');
+  if (typeof value === 'object') {
+    return Object.entries(value)
+      .map(([key, item]) => {
+        const message = stringifyError(item);
+        return message ? `${key}: ${message}` : '';
+      })
+      .filter(Boolean)
+      .join('; ');
+  }
+  return String(value);
+};
+
 const readMessage = async (response) => {
   try {
     const body = await response.json();
-    return body.message || body.detail || body.error_message || `Request failed (${response.status})`;
+    const message = stringifyError(body.message || body.detail || body.error_message || body.error || body.reason || body.errors);
+    if (message) return message;
   } catch {
-    return `Request failed (${response.status})`;
+    // Some upstream failures return an empty body or plain text.
   }
+  if (response.status === 401 || response.status === 403) return 'Your session expired. Sign in again and retry.';
+  return `Request failed (${response.status})`;
+};
+
+export const readProcessingError = (value, fallback = 'Processing failed.') => {
+  const message = stringifyError(value?.error_message || value?.message || value?.detail || value?.error || value?.reason || value?.errors);
+  return message || fallback;
 };
 
 export class ReelVoiceProcessingClient {
