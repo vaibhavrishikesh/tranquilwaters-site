@@ -63,11 +63,12 @@ export class ReelVoiceProcessingClient {
     return response.json();
   }
 
-  async submit(file, mediaType) {
+  async submit(file, mediaType, mode = "studio") {
     if (!this.token) throw new ReelVoiceProcessingError("Sign in before processing a file.");
+    if (!["studio", "pro"].includes(mode)) throw new ReelVoiceProcessingError("Choose Strong or Studio cleaning.");
     const form = new FormData();
     form.append("file", file, file.name);
-    form.append("mode", "standard");
+    form.append("mode", mode);
     form.append("adaptive", "true");
     const path = mediaType === "video" ? "/video/process/" : "/reel/";
     if (mediaType === "video") form.append("job_type", "video_reel");
